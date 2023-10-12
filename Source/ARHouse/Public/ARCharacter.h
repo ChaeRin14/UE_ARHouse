@@ -27,8 +27,11 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	float speed = 500;
+	FVector Dir;
 	
+	UPROPERTY(EditAnywhere)
 	class UCapsuleComponent* BoxComp;
+	UPROPERTY(EditAnywhere)
 	class UStaticMeshComponent* BodyMesh;
 
 	void Horizontal(float value);

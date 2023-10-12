@@ -11,8 +11,15 @@ AARCharacter::AARCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 
 	BoxComp = CreateDefaultSubobject<UCapsuleComponent>(TEXT("BoxComp"));
+	RootComponent = BoxComp;
 
 	BodyMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BodyMesh"));
+	BodyMesh->SetupAttachment(RootComponent);
+	ConstructorHelpers::FObjectFinder<UStaticMesh> TempMesh(TEXT("/Script/Engine.StaticMesh'/Game/StarterContent/Shapes/Shape_NarrowCapsule.Shape_NarrowCapsule'"));
+	if (TempMesh.Succeeded())
+	{
+		BodyMesh->SetStaticMesh(TempMesh.Object);
+	}
 
 }
 
@@ -29,7 +36,10 @@ void AARCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	
+	FVector P0 = GetActorLocation();
+	FVector vt = Dir * speed * DeltaTime;
+	FVector P = P0 + vt;
+	SetActorLocation(P, true);
 
 }
 
@@ -37,6 +47,8 @@ void AARCharacter::Tick(float DeltaTime)
 void AARCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+
 
 }
 
