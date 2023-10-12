@@ -3,17 +3,17 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Pawn.h"
-#include "ARPlayer.generated.h"
+#include "GameFramework/Character.h"
+#include "ARCharacter.generated.h"
 
 UCLASS()
-class ARHOUSE_API AARPlayer : public APawn
+class ARHOUSE_API AARCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this pawn's properties
-	AARPlayer();
+	// Sets default values for this character's properties
+	AARCharacter();
 
 protected:
 	// Called when the game starts or when spawned

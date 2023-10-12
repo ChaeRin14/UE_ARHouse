@@ -4,6 +4,8 @@
 #include "ARPlayer.h"
 #include "Components/CapsuleComponent.h"
 #include <GameFramework/Pawn.h>
+#include <Camera/CameraComponent.h>
+#include <GameFramework/SpringArmComponent.h>
 
 // Sets default values
 AARPlayer::AARPlayer()
@@ -26,6 +28,10 @@ AARPlayer::AARPlayer()
 		BodyMesh->SetStaticMesh(TempMesh.Object);
 	}
 
+	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComp"));
+	SpringArmComp->SetupAttachment(BoxComp);
+	arCamComp = CreateDefaultSubobject<UCameraComponent>(TEXT("arCamComp"));
+	arCamComp->SetupAttachment(SpringArmComp);
 
 }
 
