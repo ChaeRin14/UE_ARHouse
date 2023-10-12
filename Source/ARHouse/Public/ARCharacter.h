@@ -26,4 +26,12 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	float speed = 500;
+	
+	class UCapsuleComponent* BoxComp;
+	class UStaticMeshComponent* BodyMesh;
+
+	void Horizontal(float value);
+	void Vertical(float value);
+
 };
