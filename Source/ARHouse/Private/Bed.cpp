@@ -13,6 +13,7 @@ ABed::ABed()
 	BoxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComp"));
 	RootComponent = BoxComp;
 	BoxComp->SetBoxExtent(FVector(140, 120, 50));
+	BoxComp->SetCollisionProfileName(TEXT("Bed"));
 
 	BodyMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BodyMesh"));
 	BodyMesh->SetupAttachment(BoxComp);

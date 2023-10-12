@@ -7,6 +7,7 @@
 #include <Camera/CameraComponent.h>
 #include <GameFramework/SpringArmComponent.h>
 #include "ARBlueprintLibrary.h"
+#include <Kismet/GameplayStatics.h>
 
 // Sets default values
 AARCharacter::AARCharacter()
@@ -14,20 +15,6 @@ AARCharacter::AARCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	//BoxComp = CreateDefaultSubobject<UCapsuleComponent>(TEXT("BoxComp"));
-	//RootComponent = BoxComp;
-	//BoxComp->SetCapsuleHalfHeight(50.0f);
-	//BoxComp->SetCapsuleRadius(26.0f);
-
-	//BodyMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BodyMesh"));
-	//BodyMesh->SetupAttachment(RootComponent);
-
-	//ConstructorHelpers::FObjectFinder<UStaticMesh> TempMesh(TEXT("/Script/Engine.StaticMesh'/Game/StarterContent/Shapes/Shape_NarrowCapsule.Shape_NarrowCapsule'"));
-
-	//if (TempMesh.Succeeded())
-	//{
-	//	BodyMesh->SetStaticMesh(TempMesh.Object);
-	//}
 
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComp"));
 	SpringArmComp->SetupAttachment(RootComponent);
@@ -72,6 +59,8 @@ void AARCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	PlayerInputComponent->BindAxis(TEXT("Vertical"), this, &AARCharacter::Vertical);
 	PlayerInputComponent->BindAxis(TEXT("Turn"), this, &AARCharacter::Turn);
 	PlayerInputComponent->BindAxis(TEXT("LookUp"), this, &AARCharacter::LookUp);
+
+	PlayerInputComponent->BindAction("Cast", IE_Pressed, this, &AARCharacter::ray);
 }
 
 
@@ -94,4 +83,34 @@ void AARCharacter::LookUp(float value)
 {
 	AddControllerPitchInput(value);
 }
+
+void AARCharacter::ray()
+{
+	FVector2D MouseScreenPosition;
+	if (UGameplayStatics::GetPlayerController(this, 0)->GetMousePosition(MouseScreenPosition.X, MouseScreenPosition.Y))
+	{
+		FVector WorldOrigin;
+		FVector WorldDirection;
+		UGameplayStatics::DeprojectScreenToWorld(UGameplayStatics::GetPlayerController(this, 0), MouseScreenPosition, WorldOrigin, WorldDirection);
+
+		FVector Start = WorldOrigin;
+		FVector End = Start + (WorldDirection * 1000);
+
+		FHitResult HitResult;
+
+		if (GetWorld())
+		{
+			bool bActorHit = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Pawn);
+			DrawDebugLine(GetWorld(), Start, End, FColor::White, false, 2.f, 0.0f, 3.0f);
+
+
+			if (bActorHit && HitResult.GetActor())
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::White,
+					HitResult.GetActor()->GetName());
+			}
+		}
+	}
+}
+
 

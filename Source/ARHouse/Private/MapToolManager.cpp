@@ -33,7 +33,7 @@ void AMapToolManager::Tick(float DeltaTime)
 
 	FVector SpawnLocation = player->GetActorLocation();
 	SpawnLocation.Normalize();
-	SpawnLocation.X  *= 700;
+	SpawnLocation.X  *= 500;
 	SpawnLocation.Z = 50;
 
 	if (isBedSpawn)

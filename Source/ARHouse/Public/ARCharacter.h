@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Engine/World.h"
+#include "DrawDebugHelpers.h"
 #include "ARCharacter.generated.h"
 
 UCLASS()
@@ -52,5 +54,7 @@ public:
 
 	void Turn(float value);
 	void LookUp(float value);
+
+	void ray();
 
 };
