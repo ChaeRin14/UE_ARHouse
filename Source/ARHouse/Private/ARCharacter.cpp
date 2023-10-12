@@ -6,6 +6,7 @@
 #include <GameFramework/Pawn.h>
 #include <Camera/CameraComponent.h>
 #include <GameFramework/SpringArmComponent.h>
+#include "ARBlueprintLibrary.h"
 
 // Sets default values
 AARCharacter::AARCharacter()
@@ -40,6 +41,13 @@ void AARCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	pc = GetController<APlayerController>();
+
+	// AR 카메라 켜기
+	UARBlueprintLibrary::SetEnabledXRCamera(true);
+
+	// 설정된 값으로 AR 세션 실행
+	UARBlueprintLibrary::StartARSession(arSessionCinfig1);
 }
 
 // Called every frame

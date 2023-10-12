@@ -29,14 +29,23 @@ public:
 	float speed = 500;
 	FVector Dir;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = MySettings)
 	class UCapsuleComponent* BoxComp;
-	UPROPERTY(EditAnywhere)
+	
+	UPROPERTY(EditAnywhere, Category = MySettings)
 	class UStaticMeshComponent* BodyMesh;
-	UPROPERTY(EditAnywhere)
+	
+	UPROPERTY(EditAnywhere, Category = MySettings)
 	class USpringArmComponent* SpringArmComp;
-	UPROPERTY(EditAnywhere)
+	
+	UPROPERTY(EditAnywhere, Category = MySettings)
 	class UCameraComponent* arCamComp;
+
+	UPROPERTY(EditAnywhere, Category = MySettings)
+	class APlayerController* pc;
+
+	UPROPERTY(EditAnywhere, Category = MySettings)
+	class UARSessionConfig* arSessionCinfig1;
 
 	void Horizontal(float value);
 	void Vertical(float value);
