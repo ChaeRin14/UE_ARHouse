@@ -3,17 +3,17 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
-#include "ARCharacter.generated.h"
+#include "GameFramework/Pawn.h"
+#include "ARPlayer.generated.h"
 
 UCLASS()
-class ARHOUSE_API AARCharacter : public ACharacter
+class ARHOUSE_API AARPlayer : public APawn
 {
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this character's properties
-	AARCharacter();
+	// Sets default values for this pawn's properties
+	AARPlayer();
 
 protected:
 	// Called when the game starts or when spawned
@@ -28,7 +28,7 @@ public:
 
 	float speed = 500;
 	FVector Dir;
-	
+
 	UPROPERTY(EditAnywhere)
 	class UCapsuleComponent* BoxComp;
 	UPROPERTY(EditAnywhere)
@@ -36,5 +36,8 @@ public:
 
 	void Horizontal(float value);
 	void Vertical(float value);
+
+	void Turn(float value);
+	void LookUp(float value);
 
 };
