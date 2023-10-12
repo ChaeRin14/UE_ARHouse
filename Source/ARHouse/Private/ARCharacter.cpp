@@ -21,6 +21,7 @@ AARCharacter::AARCharacter()
 	arCamComp = CreateDefaultSubobject<UCameraComponent>(TEXT("arCamComp"));
 	arCamComp->SetupAttachment(SpringArmComp);
 
+	AutoPossessPlayer = EAutoReceiveInput::Player0;
 }
 
 // Called when the game starts or when spawned
@@ -47,6 +48,12 @@ void AARCharacter::Tick(float DeltaTime)
 	FVector p = p0 + vt;
 	SetActorLocation(p, true);
 
+	TArray<UARTrackedGeometry*> trackedObjects = UARBlueprintLibrary::GetAllGeometries();
+
+	for (UARTrackedGeometry* obj : trackedObjects)
+	{
+		obj->DebugDraw(GetWorld(), FLinearColor::Yellow, 10, 0);
+	}
 }
 
 // Called to bind functionality to input
