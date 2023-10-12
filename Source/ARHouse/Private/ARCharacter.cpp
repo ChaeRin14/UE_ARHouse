@@ -8,6 +8,7 @@
 #include <GameFramework/SpringArmComponent.h>
 #include "ARBlueprintLibrary.h"
 #include <Kismet/GameplayStatics.h>
+#include "MapToolManager.h"
 
 // Sets default values
 AARCharacter::AARCharacter()
@@ -54,6 +55,37 @@ void AARCharacter::Tick(float DeltaTime)
 	{
 		obj->DebugDraw(GetWorld(), FLinearColor::Yellow, 10, 0);
 	}
+
+	mapToolManager = Cast<AMapToolManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AMapToolManager::StaticClass()));
+
+	if (mapToolManager->isAClick || mapToolManager->isDClick)
+	{
+		FVector Ap0 = GetActorForwardVector();
+		FVector Avt = Dir * 500 * DeltaTime;
+		FVector Ap = Ap0 + Avt;
+		SetActorLocation(Ap, true);
+	}
+
+	if (mapToolManager->isWClick)
+	{
+		AddMovementInput(GetActorForwardVector(), speed);
+	}
+
+	if (mapToolManager->isSClick)
+	{
+		AddMovementInput(-GetActorForwardVector(), speed);
+	}
+
+	if (mapToolManager->isAClick)
+	{
+		AddMovementInput(-GetActorForwardVector(), speed);
+	}
+
+	if (mapToolManager->isDClick)
+	{
+		AddMovementInput(GetActorRightVector(), speed);
+	}
+
 }
 
 // Called to bind functionality to input

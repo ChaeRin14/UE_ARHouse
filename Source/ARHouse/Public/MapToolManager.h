@@ -31,4 +31,17 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category="ActorSpawnd")
 	bool isBedSpawn = false;
 
+
+	UPROPERTY(BlueprintReadWrite, Category="MoveKey")
+	bool isWClick = false;
+
+	UPROPERTY(BlueprintReadWrite, Category="MoveKey")
+	bool isAClick = false;
+
+	UPROPERTY(BlueprintReadWrite, Category="MoveKey")
+	bool isSClick = false;
+
+	UPROPERTY(BlueprintReadWrite, Category="MoveKey")
+	bool isDClick = false;
+
 };

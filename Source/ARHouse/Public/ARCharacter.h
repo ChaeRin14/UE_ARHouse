@@ -57,4 +57,6 @@ public:
 
 	void ray();
 
+	class AMapToolManager* mapToolManager;
+
 };
