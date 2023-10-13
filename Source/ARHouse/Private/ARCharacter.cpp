@@ -9,6 +9,7 @@
 #include "ARBlueprintLibrary.h"
 #include <Kismet/GameplayStatics.h>
 #include "MapToolManager.h"
+#include "Widget_CreateRoom.h"
 
 // Sets default values
 AARCharacter::AARCharacter()
@@ -23,6 +24,8 @@ AARCharacter::AARCharacter()
 	arCamComp->SetupAttachment(SpringArmComp);
 
 	AutoPossessPlayer = EAutoReceiveInput::Player0;
+
+	
 }
 
 // Called when the game starts or when spawned
@@ -37,6 +40,9 @@ void AARCharacter::BeginPlay()
 
 	// 설정된 값으로 AR 세션 실행
 	UARBlueprintLibrary::StartARSession(arSessionCinfig1);
+
+	// 핸드폰의 절전 모드를 끄기
+	UKismetSystemLibrary::ControlScreensaver(false);
 }
 
 // Called every frame
@@ -49,42 +55,71 @@ void AARCharacter::Tick(float DeltaTime)
 	FVector p = p0 + vt;
 	SetActorLocation(p, true);
 
-	TArray<UARTrackedGeometry*> trackedObjects = UARBlueprintLibrary::GetAllGeometries();
+	//ShowPlaneOutLine();
+	SetIndicator();
 
-	for (UARTrackedGeometry* obj : trackedObjects)
+	FVector2D firstTouch;
+	bool bIsFirstTouch;
+
+	pc->GetInputTouchState(ETouchIndex::Touch1, firstTouch.X, firstTouch.Y, bIsFirstTouch);
+
+	if (chair_inst == nullptr && bIsFirstTouch)
 	{
-		obj->DebugDraw(GetWorld(), FLinearColor::Yellow, 10, 0);
+		FActorSpawnParameters param;
+		param.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+		GetWorld()->SpawnActor<AActor>(chair_BP, GetTouchLocation(firstTouch), FRotator::ZeroRotator, param);
 	}
 
-	mapToolManager = Cast<AMapToolManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AMapToolManager::StaticClass()));
+// 	mapToolManager = Cast<AMapToolManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AMapToolManager::StaticClass()));
+// 
+// 	if (mapToolManager->isAClick || mapToolManager->isDClick)
+// 	{
+// 		FVector Ap0 = GetActorForwardVector();
+// 		FVector Avt = Dir * 500 * DeltaTime;
+// 		FVector Ap = Ap0 + Avt;
+// 		SetActorLocation(Ap, true);
+// 	}
+// 
+// 	if (mapToolManager->isWClick)
+// 	{
+// 		AddMovementInput(GetActorForwardVector(), speed);
+// 	}
+// 
+// 	if (mapToolManager->isSClick)
+// 	{
+// 		AddMovementInput(-GetActorForwardVector(), speed);
+// 	}
+// 
+// 	if (mapToolManager->isAClick)
+// 	{
+// 		AddMovementInput(-GetActorForwardVector(), speed);
+// 	}
+// 
+// 	if (mapToolManager->isDClick)
+// 	{
+// 		AddMovementInput(GetActorRightVector(), speed);
+// 	}
 
-	if (mapToolManager->isAClick || mapToolManager->isDClick)
-	{
-		FVector Ap0 = GetActorForwardVector();
-		FVector Avt = Dir * 500 * DeltaTime;
-		FVector Ap = Ap0 + Avt;
-		SetActorLocation(Ap, true);
-	}
+}
 
-	if (mapToolManager->isWClick)
-	{
-		AddMovementInput(GetActorForwardVector(), speed);
-	}
+FVector AARCharacter::GetTouchLocation(const FVector2D& touchPos)
+{
+	FVector	touchWorldPos, touchWorldDir;
 
-	if (mapToolManager->isSClick)
-	{
-		AddMovementInput(-GetActorForwardVector(), speed);
-	}
+	// 터치의 스크린 좌표를 월드 좌표로 변환하기
+	bool result = pc->DeprojectScreenPositionToWorld(touchPos.X, touchPos.Y, touchWorldPos, touchWorldDir);
 
-	if (mapToolManager->isAClick)
-	{
-		AddMovementInput(-GetActorForwardVector(), speed);
-	}
+	FHitResult hitInfo;
+	FCollisionObjectQueryParams params;
+	params.AddObjectTypesToQuery(ECC_WorldDynamic);
+	FVector spawnLocation;
 
-	if (mapToolManager->isDClick)
+	if (GetWorld()->LineTraceSingleByObjectType(hitInfo, touchWorldPos, touchWorldPos + touchWorldDir * 2000, params))
 	{
-		AddMovementInput(GetActorRightVector(), speed);
+		spawnLocation = hitInfo.GetActor()->GetActorLocation() + hitInfo.ImpactNormal * 20;
 	}
+	return spawnLocation;
 
 }
 
@@ -152,4 +187,27 @@ void AARCharacter::ray()
 	}
 }
 
+void AARCharacter::ShowPlaneOutLine()
+{
+	// 감지된 물체를 배열에 담기  
+	TArray<UARTrackedGeometry*> trackedObjects = UARBlueprintLibrary::GetAllGeometries();
+
+	// 감지된 면의 테두리(OutLine 표시)
+	for (UARTrackedGeometry* obj : trackedObjects)
+	{
+		obj->DebugDraw(GetWorld(), FLinearColor::Yellow, 10, 0);
+	}
+}
+
+void AARCharacter::SetIndicator()
+{
+	if(indicator == nullptr) return;
+
+	TArray<FARTraceResult> hitInfos = UARBlueprintLibrary::LineTraceTrackedObjects(FVector2D(2560/2, 1440/2), false, true, false, false);
+
+	if(hitInfos.Num() > 0)
+	{ 
+		AActor* spawnedActor = GetWorld()->SpawnActor<AActor>(indicator, hitInfos[0].GetLocalToWorldTransform());
+	}
+}
 

@@ -49,6 +49,15 @@ public:
 	UPROPERTY(EditAnywhere, Category = MySettings)
 	class UARSessionConfig* arSessionCinfig1;
 
+	UPROPERTY(EditAnywhere, Category = MySettings)
+	TSubclassOf<AActor> indicator;
+
+	UPROPERTY(EditAnywhere, Category = MySettings)
+	TSubclassOf<AActor> chair_BP;
+
+private:
+	AActor* chair_inst;
+
 	void Horizontal(float value);
 	void Vertical(float value);
 
@@ -56,7 +65,13 @@ public:
 	void LookUp(float value);
 
 	void ray();
-
+	
+	void ShowPlaneOutLine();
+	void SetIndicator();
+	
 	class AMapToolManager* mapToolManager;
+	
+	FVector GetTouchLocation(const FVector2D& touchPos);
+	
 
 };
