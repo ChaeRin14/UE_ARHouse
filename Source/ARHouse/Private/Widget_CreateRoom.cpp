@@ -5,16 +5,16 @@
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
 #include "ARCharacter.h"
+#include <Kismet/GameplayStatics.h>
 
 void UWidget_CreateRoom::NativeConstruct()
 {
-	if(btn_MakeRoom != nullptr)
-	{ 
-		btn_MakeRoom->OnClicked.AddDynamic(this, &UWidget_CreateRoom::OnClickCreateButton);
-	}
+	btn_MakeRoom->OnClicked.AddDynamic(this, &UWidget_CreateRoom::OnClickCreateButton);
+
 }
 
 void UWidget_CreateRoom::OnClickCreateButton()
 {
-	/*bIsClicked = true;*/
+	UE_LOG(LogTemp, Warning,TEXT("Click!!!"));
+	UGameplayStatics::OpenLevel(GetWorld(), FName("ARHouse"));
 }

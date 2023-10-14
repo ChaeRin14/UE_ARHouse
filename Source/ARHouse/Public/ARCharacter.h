@@ -55,8 +55,13 @@ public:
 	UPROPERTY(EditAnywhere, Category = MySettings)
 	TSubclassOf<AActor> chair_BP;
 
+	UPROPERTY(EditAnywhere, Category = MySettings)
+	TSubclassOf<UUserWidget> widget_BP; 
+
 private:
+	AActor* spawnedIndicator;
 	AActor* chair_inst;
+	UUserWidget* widget_inst;
 
 	void Horizontal(float value);
 	void Vertical(float value);
@@ -73,5 +78,6 @@ private:
 	
 	FVector GetTouchLocation(const FVector2D& touchPos);
 	
+	bool bCanSpawnActor = true;
 
 };
