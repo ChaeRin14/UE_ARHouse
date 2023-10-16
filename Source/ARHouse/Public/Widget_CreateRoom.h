@@ -24,6 +24,12 @@ public:
 	UPROPERTY(VisibleAnywhere, meta=(BindWidget), Category="MySettings")
 	class UTextBlock* text_MakeRoom;
 
+	UPROPERTY(VisibleAnywhere, meta=(BindWidget), Category="MySettings")
+	class UImage* img_Loading;
+
+	UPROPERTY(VisibleAnywhere, meta=(BindWidget), Category="MySettings")
+	class UThrobber* t_Loading;
+
 	UPROPERTY(EditAnywhere, Category="MySettings")
 	bool bIsClicked = false;
 

@@ -24,7 +24,7 @@ AARCharacter::AARCharacter()
 	arCamComp->SetupAttachment(SpringArmComp);
 
 	AutoPossessPlayer = EAutoReceiveInput::Player0;
-
+	
 	
 }
 
@@ -195,7 +195,6 @@ void AARCharacter::SetIndicator()
 				widget_inst = (CreateWidget<UUserWidget>(GetWorld(), widget_BP));
 				if (widget_inst)
 				{
-
 					// 위젯을 화면에 추가
 					widget_inst->AddToViewport();
 				}

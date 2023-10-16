@@ -6,15 +6,31 @@
 #include "Components/TextBlock.h"
 #include "ARCharacter.h"
 #include <Kismet/GameplayStatics.h>
+#include "Components/Image.h"
+#include "Components/Throbber.h"
 
 void UWidget_CreateRoom::NativeConstruct()
 {
 	btn_MakeRoom->OnClicked.AddDynamic(this, &UWidget_CreateRoom::OnClickCreateButton);
-
+	img_Loading->SetVisibility(ESlateVisibility::Hidden);
+	t_Loading->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UWidget_CreateRoom::OnClickCreateButton()
 {
-	UE_LOG(LogTemp, Warning,TEXT("Click!!!"));
 	UGameplayStatics::OpenLevel(GetWorld(), FName("ARHouse"));
+
+	img_Loading->SetVisibility(ESlateVisibility::Visible);
+	t_Loading->SetVisibility(ESlateVisibility::Visible);
+
+	FTimerHandle DelayHandle;
+	GetWorld()->GetTimerManager().SetTimer(DelayHandle, FTimerDelegate::CreateLambda([&]()
+		{
+			if (IsValid(this))
+			{
+				this->RemoveFromParent();
+			}
+		}
+	), 4, false);
+	
 }
