@@ -50,13 +50,8 @@ public:
 	class UARSessionConfig* arSessionCinfig1;
 
 	UPROPERTY(EditAnywhere, Category = MySettings)
-	TSubclassOf<AActor> indicator;
-
-	UPROPERTY(EditAnywhere, Category = MySettings)
 	TSubclassOf<AActor> chair_BP;
 
-	UPROPERTY(EditAnywhere, Category = MySettings)
-	TSubclassOf<UUserWidget> widget_BP; 
 
 private:
 	AActor* spawnedIndicator;
@@ -72,7 +67,6 @@ private:
 	void ray();
 	
 	void ShowPlaneOutLine();
-	void SetIndicator();
 	
 	class AMapToolManager* mapToolManager;
 	

@@ -12,25 +12,24 @@
 void UWidget_CreateRoom::NativeConstruct()
 {
 	btn_MakeRoom->OnClicked.AddDynamic(this, &UWidget_CreateRoom::OnClickCreateButton);
+	
 	img_Loading->SetVisibility(ESlateVisibility::Hidden);
 	t_Loading->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UWidget_CreateRoom::OnClickCreateButton()
 {
-	UGameplayStatics::OpenLevel(GetWorld(), FName("ARHouse"));
+	
 
-	img_Loading->SetVisibility(ESlateVisibility::Visible);
-	t_Loading->SetVisibility(ESlateVisibility::Visible);
+	PlayAnimation(a_fade);
+ 	img_Loading->SetVisibility(ESlateVisibility::Visible);
+ 	t_Loading->SetVisibility(ESlateVisibility::Visible);
 
 	FTimerHandle DelayHandle;
 	GetWorld()->GetTimerManager().SetTimer(DelayHandle, FTimerDelegate::CreateLambda([&]()
 		{
-			if (IsValid(this))
-			{
-				this->RemoveFromParent();
-			}
+			UGameplayStatics::OpenLevel(GetWorld(), FName("ARHouse"));
 		}
-	), 4, false);
+	), 10, false);
 	
 }
