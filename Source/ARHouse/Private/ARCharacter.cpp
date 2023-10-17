@@ -14,7 +14,7 @@
 // Sets default values
 AARCharacter::AARCharacter()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 
@@ -24,15 +24,15 @@ AARCharacter::AARCharacter()
 	arCamComp->SetupAttachment(SpringArmComp);
 
 	AutoPossessPlayer = EAutoReceiveInput::Player0;
-	
-	
+
+
 }
 
 // Called when the game starts or when spawned
 void AARCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	pc = GetController<APlayerController>();
 
 	// AR 카메라 켜기
@@ -71,36 +71,22 @@ void AARCharacter::Tick(float DeltaTime)
 		GetWorld()->SpawnActor<AActor>(chair_BP, GetTouchLocation(firstTouch), FRotator::ZeroRotator, param);
 	}
 
-// 	mapToolManager = Cast<AMapToolManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AMapToolManager::StaticClass()));
-// 
-// 	if (mapToolManager->isAClick || mapToolManager->isDClick)
-// 	{
-// 		FVector Ap0 = GetActorForwardVector();
-// 		FVector Avt = Dir * 500 * DeltaTime;
-// 		FVector Ap = Ap0 + Avt;
-// 		SetActorLocation(Ap, true);
-// 	}
-// 
-// 	if (mapToolManager->isWClick)
-// 	{
-// 		AddMovementInput(GetActorForwardVector(), speed);
-// 	}
-// 
-// 	if (mapToolManager->isSClick)
-// 	{
-// 		AddMovementInput(-GetActorForwardVector(), speed);
-// 	}
-// 
-// 	if (mapToolManager->isAClick)
-// 	{
-// 		AddMovementInput(-GetActorForwardVector(), speed);
-// 	}
-// 
-// 	if (mapToolManager->isDClick)
-// 	{
-// 		AddMovementInput(GetActorRightVector(), speed);
-// 	}
+	if (bIsDragging && ClickedActor)
+	{
+		FVector WorldOrigin;
+		FVector WorldDirection;
 
+		// 현재 마우스 위치 월드 좌표로 변환하기
+		UGameplayStatics::GetPlayerController(this, 0)->DeprojectMousePositionToWorld(WorldOrigin, WorldDirection);
+
+		// 새로운 위치 계산하기
+		FVector DragEndPosition = WorldOrigin + (WorldDirection *1000.f); // 이동 거리 조절 가능
+
+		// 액터의 위치 업데이트하기
+		FVector DragDelta = DragEndPosition - DragStartLocation;
+		DragDelta.Z = 0;
+		ClickedActor->SetActorLocation(DragStartLocation + DragDelta);
+	}
 }
 
 // Called to bind functionality to input
@@ -114,18 +100,20 @@ void AARCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	PlayerInputComponent->BindAxis(TEXT("Turn"), this, &AARCharacter::Turn);
 	PlayerInputComponent->BindAxis(TEXT("LookUp"), this, &AARCharacter::LookUp);
 
+	PlayerInputComponent->BindAction("MouseLeftButton", IE_Pressed, this, &AARCharacter::OnLeftMouseButtonPressed);
+	PlayerInputComponent->BindAction("MouseLeftButton", IE_Released, this, &AARCharacter::OnLeftMouseButtonReleased);
+
 	PlayerInputComponent->BindAction("Cast", IE_Pressed, this, &AARCharacter::ray);
 }
 
-
 void AARCharacter::Horizontal(float value)
 {
-	AddMovementInput(GetActorRightVector(), value);
+	Dir.Y = value;
 }
 
 void AARCharacter::Vertical(float value)
 {
-	AddMovementInput(GetActorForwardVector(), value);
+	Dir.X = value;
 }
 
 void AARCharacter::Turn(float value)
@@ -164,6 +152,11 @@ void AARCharacter::ray()
 					HitResult.GetActor()->GetName());
 			}
 		}
+
+		if (GetWorld()->LineTraceSingleByProfile(HitResult, Start, End, FName("Bed")))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("HitResult"));
+		}
 	}
 }
 
@@ -181,7 +174,7 @@ void AARCharacter::ShowPlaneOutLine()
 
 void AARCharacter::SetIndicator()
 {
-	if(indicator == nullptr) return;
+	if (indicator == nullptr) return;
 	// 화면에 추적된 면이 있는지 AR 라인 트레이스로 검색한다.
 	TArray<FARTraceResult> hitInfos = UARBlueprintLibrary::LineTraceTrackedObjects(FVector2D(2560 / 2, 1440 / 2), false, true, false, false);
 
@@ -189,7 +182,7 @@ void AARCharacter::SetIndicator()
 	{
 		// 인디케이터가 없다면 생성한다.
 		if (spawnedIndicator == nullptr)
-		{ 
+		{
 			if (widget_BP)
 			{
 				widget_inst = (CreateWidget<UUserWidget>(GetWorld(), widget_BP));
@@ -218,13 +211,13 @@ void AARCharacter::SetIndicator()
 			spawnedIndicator->SetActorHiddenInGame(true);
 		}
 	}
-	
+
 }
 
 FVector AARCharacter::GetTouchLocation(const FVector2D& touchPos)
 {
-	if(bCanSpawnActor)
-	{ 
+	if (bCanSpawnActor)
+	{
 		FVector	touchWorldPos, touchWorldDir;
 
 		// 터치의 스크린 좌표를 월드 좌표로 변환하기
@@ -243,4 +236,25 @@ FVector AARCharacter::GetTouchLocation(const FVector2D& touchPos)
 		return spawnLocation;
 	}
 	return FVector::ZeroVector;
+}
+
+void AARCharacter::OnLeftMouseButtonPressed()
+{
+	// 클릭된 액터 가져오기 (마우스 커서 아래에 있는)
+	FHitResult HitResult;
+	UGameplayStatics::GetPlayerController(this, 0)->GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, false, HitResult);
+	
+	if (HitResult.GetActor() && HitResult.GetActor()->IsA<ABed>())
+	{
+		ClickedActor = HitResult.GetActor();
+		DragStartLocation = ClickedActor->GetActorLocation();
+		bIsDragging = true;
+	}
+}
+
+void AARCharacter::OnLeftMouseButtonReleased()
+{
+	// 드래그 종료
+	bIsDragging = false;
+	UE_LOG(LogTemp, Warning,TEXT("sdqasdqwd"));
 }
