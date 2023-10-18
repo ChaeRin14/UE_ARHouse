@@ -14,4 +14,19 @@ class ARHOUSE_API AARHouseGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
 	
+protected:
+	virtual void BeginPlay() override;
+
+public:
+	UPROPERTY(EditAnywhere, Category=MySettings)
+	TSubclassOf<class UMainWidget> httpWidget;
+
+	void SetLogText(const FString msg);
+	void SetImageTexture(class UTexture2D* tex);
+
+
+private:
+	class UMainWidget* httpUI;
+	
+	
 };

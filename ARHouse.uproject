@@ -32,6 +32,10 @@
 		{
 			"Name": "ARUtilities",
 			"Enabled": true
+		},
+		{
+			"Name": "DatasmithFBXImporter",
+			"Enabled": true
 		}
 	]
 }
