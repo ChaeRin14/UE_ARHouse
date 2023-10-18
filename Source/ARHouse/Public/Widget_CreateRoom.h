@@ -27,11 +27,17 @@ public:
 	UPROPERTY(VisibleAnywhere, meta=(BindWidget), Category="MySettings")
 	class UImage* img_Loading;
 
-	UPROPERTY(VisibleAnywhere, meta=(BindWidget), Category="MySettings")
-	class UThrobber* t_Loading;
-
 	UPROPERTY(VisibleAnywhere, Transient, meta = (BindWidgetAnim), Category = "MySettings")
 	class UWidgetAnimation* a_fade;
+
+	UPROPERTY(VisibleAnywhere, meta=(BindWidget), Category="MySettings")
+	class UTextBlock* text_bulid;
+
+	UPROPERTY(VisibleAnywhere, Transient, meta = (BindWidgetAnim), Category = "MySettings")
+	class UWidgetAnimation* a_Loading;
+
+	UPROPERTY(VisibleAnywhere, meta=(BindWidget), Category="MySettings")
+	class UProgressBar* pro_Loading;
 
 	UPROPERTY(EditAnywhere, Category="MySettings")
 	bool bIsClicked = false;
@@ -39,4 +45,9 @@ public:
 	UFUNCTION()
 	void OnClickCreateButton();
 
+	void AsyncLevelLoad(const FString& levelPath, const FString& levelName);
+	void OnFinishedLevelLoad(const FString levelName);
+
+// 	UFUNCTION()
+// 	void OnLoadComplete();
 };
