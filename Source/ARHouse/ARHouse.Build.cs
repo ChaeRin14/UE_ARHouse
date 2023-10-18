@@ -8,7 +8,7 @@ public class ARHouse : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "AugmentedReality", "UMG" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "AugmentedReality", "UMG", "HTTP", "Json", "JsonUtilities", "SlateCore" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 
