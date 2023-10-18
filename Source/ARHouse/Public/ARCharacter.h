@@ -74,4 +74,16 @@ private:
 	
 	bool bCanSpawnActor = true;
 
+	
+protected:
+   UPROPERTY(BlueprintReadOnly)
+   AActor* ClickedActor = nullptr;
+
+   FVector DragStartLocation; // 드래그 시작 위치
+   bool bIsDragging = false;
+
+public:
+   void OnLeftMouseButtonPressed();
+   void OnLeftMouseButtonReleased();
+
 };

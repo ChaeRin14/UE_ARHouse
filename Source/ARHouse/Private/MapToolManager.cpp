@@ -31,15 +31,17 @@ void AMapToolManager::Tick(float DeltaTime)
 
 	player = Cast<AARCharacter>(UGameplayStatics::GetActorOfClass(GetWorld(), AARCharacter::StaticClass()));
 
-	FVector SpawnLocation = player->GetActorLocation();
+	FVector SpawnLocation = player->GetActorForwardVector();
+	FRotator SpawnRotator = player->GetActorRotation();
 	SpawnLocation.Normalize();
-	SpawnLocation.X  *= 500;
-	SpawnLocation.Z = 50;
 
 	if (isBedSpawn)
 	{
-		bedActor = GetWorld()->SpawnActor<ABed>(SpawnLocation, GetActorRotation(), param);
+		bedActor = GetWorld()->SpawnActor<ABed>(SpawnLocation, SpawnRotator, param);
+	}
 
+	if (bedActor != nullptr)
+	{
 		isBedSpawn = false;
 	}
 }
