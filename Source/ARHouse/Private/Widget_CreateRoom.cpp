@@ -1,4 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Widget_CreateRoom.h"
@@ -34,15 +33,7 @@ void UWidget_CreateRoom::OnClickCreateButton()
 		{
 			AsyncLevelLoad("/Game/Map/", "ARHouse"); 
 		}
-	), 4, false);
-
-
-	// 	// 비동기 레벨 로딩 시작
-	// 	ULevelStreaming* LevelStreaming = ULevelStreaming::LoadLevelInstance(GetWorld(), "ARHouse");
-	// 	if (LevelStreaming)
-	// 	{
-	// 		LevelStreaming->OnLoadComplete.AddDynamic(this, &UWidget_CreateRoom::OnLoadComplete);
-	// 	}
+	), 5, false);
 
 }
 
@@ -65,8 +56,5 @@ void UWidget_CreateRoom::OnFinishedLevelLoad(const FString levelName)
 	UGameplayStatics::OpenLevel(this, FName(*levelName));
 }
 
-// void UWidget_CreateRoom::OnLoadComplete()
-// {
-// 	UGameplayStatics::OpenLevel(GetWorld(), FName("ARHouse"));
-// }
+
 

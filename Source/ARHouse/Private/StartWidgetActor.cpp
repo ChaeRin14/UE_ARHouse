@@ -1,26 +1,26 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+
 
 
 #include "StartWidgetActor.h"
 #include "Widget_CreateRoom.h"
 #include "ARBlueprintLibrary.h"
 
-// Sets default values
+
 AStartWidgetActor::AStartWidgetActor()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+ 	
 	PrimaryActorTick.bCanEverTick = true;
 
 }
 
-// Called when the game starts or when spawned
+
 void AStartWidgetActor::BeginPlay()
 {
 	Super::BeginPlay();
 	
 }
 
-// Called every frame
+
 void AStartWidgetActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
