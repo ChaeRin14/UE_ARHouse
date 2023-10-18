@@ -8,28 +8,65 @@
 #include <Kismet/GameplayStatics.h>
 #include "Components/Image.h"
 #include "Components/Throbber.h"
+#include "UObject/UObjectGlobals.h"
+#include "Components/Progressbar.h"
+
 
 void UWidget_CreateRoom::NativeConstruct()
 {
 	btn_MakeRoom->OnClicked.AddDynamic(this, &UWidget_CreateRoom::OnClickCreateButton);
-	
+
 	img_Loading->SetVisibility(ESlateVisibility::Hidden);
-	t_Loading->SetVisibility(ESlateVisibility::Hidden);
+	text_bulid->SetVisibility(ESlateVisibility::Hidden);
+	pro_Loading->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UWidget_CreateRoom::OnClickCreateButton()
 {
-	
-
 	PlayAnimation(a_fade);
- 	img_Loading->SetVisibility(ESlateVisibility::Visible);
- 	t_Loading->SetVisibility(ESlateVisibility::Visible);
-
+	img_Loading->SetVisibility(ESlateVisibility::Visible);
+	text_bulid->SetVisibility(ESlateVisibility::Visible);
+	btn_MakeRoom->SetVisibility(ESlateVisibility::Hidden);
+	pro_Loading->SetVisibility(ESlateVisibility::Visible);
+	PlayAnimation(a_Loading);
 	FTimerHandle DelayHandle;
 	GetWorld()->GetTimerManager().SetTimer(DelayHandle, FTimerDelegate::CreateLambda([&]()
 		{
-			UGameplayStatics::OpenLevel(GetWorld(), FName("ARHouse"));
+			AsyncLevelLoad("/Game/Map/", "ARHouse"); 
 		}
-	), 10, false);
-	
+	), 4, false);
+
+
+	// 	// 비동기 레벨 로딩 시작
+	// 	ULevelStreaming* LevelStreaming = ULevelStreaming::LoadLevelInstance(GetWorld(), "ARHouse");
+	// 	if (LevelStreaming)
+	// 	{
+	// 		LevelStreaming->OnLoadComplete.AddDynamic(this, &UWidget_CreateRoom::OnLoadComplete);
+	// 	}
+
 }
+
+void UWidget_CreateRoom::AsyncLevelLoad(const FString& levelPath, const FString& levelName)
+{
+	LoadPackageAsync(levelPath + levelName,
+		FLoadPackageAsyncDelegate::CreateLambda([=](const FName& packageName, UPackage* loadPackage, EAsyncLoadingResult::Type result)
+			{
+				if (result == EAsyncLoadingResult::Succeeded)
+				{
+					OnFinishedLevelLoad(levelName);
+				}
+			}),
+			0,
+			PKG_ContainsMap);
+}
+
+void UWidget_CreateRoom::OnFinishedLevelLoad(const FString levelName)
+{
+	UGameplayStatics::OpenLevel(this, FName(*levelName));
+}
+
+// void UWidget_CreateRoom::OnLoadComplete()
+// {
+// 	UGameplayStatics::OpenLevel(GetWorld(), FName("ARHouse"));
+// }
+
