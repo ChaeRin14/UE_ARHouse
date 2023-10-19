@@ -26,23 +26,23 @@ void AMapToolManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	FActorSpawnParameters param;
-	param.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	//FActorSpawnParameters param;
+	//param.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-	player = Cast<AARCharacter>(UGameplayStatics::GetActorOfClass(GetWorld(), AARCharacter::StaticClass()));
+	//player = Cast<AARCharacter>(UGameplayStatics::GetActorOfClass(GetWorld(), AARCharacter::StaticClass()));
 
-	FVector SpawnLocation = player->GetActorForwardVector();
-	FRotator SpawnRotator = player->GetActorRotation();
-	SpawnLocation.Normalize();
+	////FVector SpawnLocation = player->GetActorForwardVector();
+	//FRotator SpawnRotator = player->GetActorRotation();
+	//SpawnLocation.Normalize();
 
-	if (isBedSpawn)
-	{
-		bedActor = GetWorld()->SpawnActor<ABed>(SpawnLocation, SpawnRotator, param);
-	}
+	//if (isBedSpawn)
+	//{
+	//	bedActor = GetWorld()->SpawnActor<ABed>(SpawnLocation, SpawnRotator, param);
+	//}
 
-	if (bedActor != nullptr)
-	{
-		isBedSpawn = false;
-	}
+	//if (bedActor != nullptr)
+	//{
+	//	isBedSpawn = false;
+	//}
 }
 
