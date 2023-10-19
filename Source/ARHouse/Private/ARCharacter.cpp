@@ -25,6 +25,7 @@ AARCharacter::AARCharacter()
 	AutoPossessPlayer = EAutoReceiveInput::Player0;
 	
 	
+	
 }
 
 // Called when the game starts or when spawned
@@ -96,6 +97,7 @@ void AARCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	PlayerInputComponent->BindAxis(TEXT("Vertical"), this, &AARCharacter::Vertical);
 	PlayerInputComponent->BindAxis(TEXT("Turn"), this, &AARCharacter::Turn);
 	PlayerInputComponent->BindAxis(TEXT("LookUp"), this, &AARCharacter::LookUp);
+	PlayerInputComponent->BindAxis(TEXT("Zaxis"), this, &AARCharacter::Zaxis);
 
 	PlayerInputComponent->BindAction("MouseLeftButton", IE_Pressed, this, &AARCharacter::OnLeftMouseButtonPressed);
 	PlayerInputComponent->BindAction("MouseLeftButton", IE_Released, this, &AARCharacter::OnLeftMouseButtonReleased);
@@ -119,9 +121,16 @@ void AARCharacter::Turn(float value)
 	AddControllerYawInput(value);
 }
 
-void AARCharacter::LookUp(float value)
+void AARCharacter::LookUp(float AxisValue)
 {
-	AddControllerPitchInput(value);
+	FRotator NewRotation = GetControlRotation();
+	NewRotation.Pitch = FMath::Clamp(NewRotation.Pitch + AxisValue, -90.0f, 90.0f);
+	SetActorRotation(NewRotation);
+}
+
+void AARCharacter::Zaxis(float value)
+{
+	AddMovementInput(GetActorUpVector(), value);
 }
 
 void AARCharacter::ray()

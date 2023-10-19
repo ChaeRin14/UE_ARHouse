@@ -64,6 +64,8 @@ private:
 	void Turn(float value);
 	void LookUp(float value);
 
+	void Zaxis(float value);
+
 	void ray();
 	
 	void ShowPlaneOutLine();
