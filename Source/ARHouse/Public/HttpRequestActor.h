@@ -28,7 +28,8 @@ public:
 	// 이미지 저장하기
 	void SaveImage(const UTexture2D* tex);
 	// 이미지 보내기
-	void PostImage(const FString url, const UTexture2D* tex);
+	void PostImage_Png(const FString url, const UTexture2D* tex);
+	void PostImage_Jpg(const FString url, const UTexture2D* tex);
 
 	
 private:

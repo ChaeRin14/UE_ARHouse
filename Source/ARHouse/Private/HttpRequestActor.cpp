@@ -218,7 +218,7 @@ void AHttpRequestActor::SaveImage(const UTexture2D* tex)
 }
 
 // 텍스처 포스트 함수
-void AHttpRequestActor::PostImage(const FString url, const UTexture2D* tex)
+void AHttpRequestActor::PostImage_Png(const FString url, const UTexture2D* tex)
 {
 	// 텍스처의 각 픽셀 컬러 정보를 배열에 담는다
 	FTexture2DMipMap mipData = tex->GetPlatformData()->Mips[0];
@@ -243,7 +243,40 @@ void AHttpRequestActor::PostImage(const FString url, const UTexture2D* tex)
 		TSharedRef<IHttpRequest> req = FHttpModule::Get().CreateRequest();
 		req->SetURL(url);
 		req->SetVerb("POST");
-		req->SetHeader(TEXT("Content-Type"), TEXT("image/jpeg"));
+		req->SetHeader(TEXT("Content-Type"), TEXT("image/png"));
+		req->SetContent(compressedImage);
+		req->OnProcessRequestComplete().BindUObject(this, &AHttpRequestActor::OnPostImageData);
+		req->ProcessRequest();
+	}
+}
+
+// 텍스처 포스트 함수
+void AHttpRequestActor::PostImage_Jpg(const FString url, const UTexture2D* tex)
+{
+	// 텍스처의 각 픽셀 컬러 정보를 배열에 담는다
+	FTexture2DMipMap mipData = tex->GetPlatformData()->Mips[0];
+
+	TArray<FColor> imgArr;
+	int32 width = mipData.SizeX;
+	int32 height = mipData.SizeY;
+	imgArr.AddUninitialized(width * height);
+
+	void* pixelData = mipData.BulkData.Lock(LOCK_READ_ONLY);
+
+	if (pixelData != nullptr)
+	{
+		FMemory::Memcpy(imgArr.GetData(), pixelData, imgArr.Num() * sizeof(FColor));
+		mipData.BulkData.Unlock();
+
+		// 이미지 바이트 배열을 압축한다
+		TArray<uint8> compressedImage;
+		FImageUtils::CompressImageArray(width, height, imgArr, compressedImage);
+
+		// 이미지 바이트 배열을 포스트 한다
+		TSharedRef<IHttpRequest> req = FHttpModule::Get().CreateRequest();
+		req->SetURL(url);
+		req->SetVerb("POST");
+		req->SetHeader(TEXT("Content-Type"), TEXT("image/jpg"));
 		req->SetContent(compressedImage);
 		req->OnProcessRequestComplete().BindUObject(this, &AHttpRequestActor::OnPostImageData);
 		req->ProcessRequest();

@@ -41,7 +41,7 @@ void UMainWidget::FileOn()
         TEXT("Select File"),      // 탐색기 제목
         DefaultPath,               // 열고싶은 탐색기 경로
         TEXT(""),                 // 기본 필터 (모든 파일 허용)
-        TEXT("Image Files (*.png;*.jpeg)|*.png;*.jpeg"),  // png 및 jpeg 파일 필터
+        TEXT("Image Files (*.png;*.jpg)|*.png;*.jpg"),  // png 및 jpeg 파일 필터
         EFileDialogFlags::None,
         OutFiles              // 선택한 파일 경로가 여기에 들어옴
     );
@@ -96,14 +96,24 @@ void UMainWidget::FileOn()
 
 }
 
-
 void UMainWidget::PostImageRequest()
 {
     TArray<uint8> FileData;
 
     if (FFileHelper::LoadFileToArray(FileData, *DestinationFilePath))
     {
-        UTexture2D* LoadedTexture = FImageUtils::ImportFileAsTexture2D(DestinationFilePath);
+        FString FileExtension = FPaths::GetExtension(DestinationFilePath);
+
+        UTexture2D* LoadedTexture = nullptr;
+
+        if (FileExtension.Equals("png", ESearchCase::IgnoreCase))
+        {
+            LoadedTexture = FImageUtils::ImportBufferAsTexture2D(FileData);
+        }
+        else
+        {
+            LoadedTexture = FImageUtils::ImportFileAsTexture2D(DestinationFilePath);
+        }
 
         if (LoadedTexture == nullptr)
         {
@@ -113,8 +123,17 @@ void UMainWidget::PostImageRequest()
 
         // 텍스처 사용 예시: 로그 출력
         UE_LOG(LogTemp, Warning, TEXT("Loaded texture dimensions: %dx%d"), LoadedTexture->GetSizeX(), LoadedTexture->GetSizeY());
-        httpReqActor->PostImage(baseURL, LoadedTexture);
-        UE_LOG(LogTemp, Warning, TEXT("%s"), *baseURL);
+
+        if (FileExtension.Equals("png", ESearchCase::IgnoreCase))
+        {
+            httpReqActor->PostImage_Png(baseURL, LoadedTexture);
+            UE_LOG(LogTemp, Warning, TEXT("png : %s"), *baseURL);
+        }
+        else
+        {
+            httpReqActor->PostImage_Jpg(baseURL, LoadedTexture);
+            UE_LOG(LogTemp, Warning, TEXT("jpg : %s"), *baseURL);
+        }
 
         // 필요한 작업 수행 후 텍스처 사용이 끝나면 제거해야 함
         LoadedTexture->RemoveFromRoot();
@@ -123,5 +142,5 @@ void UMainWidget::PostImageRequest()
     {
         UE_LOG(LogTemp, Error, TEXT("Failed to load file data: %s"), *DestinationFilePath);
     }
-
 }
+
