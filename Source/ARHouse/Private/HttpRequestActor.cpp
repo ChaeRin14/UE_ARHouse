@@ -237,7 +237,7 @@ void AHttpRequestActor::PostImage_Png(const FString url, const UTexture2D* tex)
 
 		// 이미지 바이트 배열을 압축한다
 		TArray<uint8> compressedImage;
-		FImageUtils::CompressImageArray(width, height, imgArr, compressedImage);
+		FImageUtils::ThumbnailCompressImageArray(width, height, imgArr, compressedImage);
 
 		// 이미지 바이트 배열을 포스트 한다
 		TSharedRef<IHttpRequest> req = FHttpModule::Get().CreateRequest();
@@ -249,6 +249,8 @@ void AHttpRequestActor::PostImage_Png(const FString url, const UTexture2D* tex)
 		req->ProcessRequest();
 	}
 }
+
+
 
 // 텍스처 포스트 함수
 void AHttpRequestActor::PostImage_Jpg(const FString url, const UTexture2D* tex)
@@ -270,7 +272,7 @@ void AHttpRequestActor::PostImage_Jpg(const FString url, const UTexture2D* tex)
 
 		// 이미지 바이트 배열을 압축한다
 		TArray<uint8> compressedImage;
-		FImageUtils::CompressImageArray(width, height, imgArr, compressedImage);
+		FImageUtils::ThumbnailCompressImageArray(width, height, imgArr, compressedImage);
 
 		// 이미지 바이트 배열을 포스트 한다
 		TSharedRef<IHttpRequest> req = FHttpModule::Get().CreateRequest();
