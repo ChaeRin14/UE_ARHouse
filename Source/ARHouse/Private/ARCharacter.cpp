@@ -9,11 +9,14 @@
 #include "ARBlueprintLibrary.h"
 #include <Kismet/GameplayStatics.h>
 #include "MapToolManager.h"
+#include "MapToolWidget.h"
+#include "RotationArrrowActor.h"
+#include <Kismet/KismetMathLibrary.h>
 
 // Sets default values
 AARCharacter::AARCharacter()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 
@@ -23,16 +26,16 @@ AARCharacter::AARCharacter()
 	arCamComp->SetupAttachment(SpringArmComp);
 
 	AutoPossessPlayer = EAutoReceiveInput::Player0;
-	
-	
-	
+
+
+
 }
 
 // Called when the game starts or when spawned
 void AARCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	pc = GetController<APlayerController>();
 
 	// AR 카메라 켜기
@@ -68,7 +71,8 @@ void AARCharacter::Tick(float DeltaTime)
 		GetWorld()->SpawnActor<AActor>(chair_BP, GetTouchLocation(firstTouch), FRotator::ZeroRotator, param);
 	}
 
-	if (bIsDragging && ClickedActor)
+
+	if (bIsDragging && ClickedActor && isMoveStart)
 	{
 		FVector WorldOrigin;
 		FVector WorldDirection;
@@ -77,13 +81,72 @@ void AARCharacter::Tick(float DeltaTime)
 		UGameplayStatics::GetPlayerController(this, 0)->DeprojectMousePositionToWorld(WorldOrigin, WorldDirection);
 
 		// 새로운 위치 계산하기
-		FVector DragEndPosition = WorldOrigin + (WorldDirection * 1000.f); // 이동 거리 조절 가능
+		DragEndPosition = WorldOrigin + (WorldDirection * 1000.f); // 이동 거리 조절 가능
 
 		// 액터의 위치 업데이트하기
 		FVector DragDelta = DragEndPosition - DragStartLocation;
 		DragDelta.Z = 0;
 		ClickedActor->SetActorLocation(DragStartLocation + DragDelta);
 	}
+
+	// 회전 버튼을 누르면 회전 오브젝트가 스폰되게
+	if (isRotStart && isBedSpawn)
+	{
+		bedActor = Cast<ABed>(UGameplayStatics::GetActorOfClass(GetWorld(), ABed::StaticClass()));
+
+		if (bedActor)
+		{
+			FVector SpawnLocation = bedActor->GetActorLocation() + FVector(0, 0, 70);; // 스폰 위치 설정 (bedActor의 위치로 설정)
+			FRotator SpawnRotation = FRotator::ZeroRotator; // 스폰 회전 설정
+
+			RotationArrowActor = GetWorld()->SpawnActor<ARotationArrrowActor>(SpawnLocation, SpawnRotation);
+			bedActor->SetActorLocation(FVector(0, 0, -70));
+
+			if (RotationArrowActor && bedActor)
+			{
+				bedActor->AttachToComponent(RotationArrowActor->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+				isBedSpawn = false;
+
+			}
+		}
+		
+	}
+
+	if (bIsDragging && ClickedActor && isRotStart)
+	{
+		// 현재 마우스 위치와 이전 마우스 위치 사이의 X 변화량을 계산합니다.
+		float DeltaX = DragEndPosition.X - DragStartLocation.X;
+
+		// 회전 속도 조절을 위한 변수 설정
+		float RotationSpeed = 1.0f;  // 원하는 회전 속도 값으로 변경해주세요
+
+		// 프레임당 회전량 계산
+		float RotationAmount = -DeltaX * RotationSpeed * GetWorld()->GetDeltaSeconds();  // 음수로 변경
+
+		// 액터의 현재 회전값을 가져옵니다.
+		FRotator CurrentRotation = ClickedActor->GetActorRotation();
+
+		// Yaw 회전값을 계산하여 업데이트합니다.
+		float NewYaw = CurrentRotation.Yaw + RotationAmount;
+
+		// Yaw 값을 0~360 범위로 제한합니다.
+		NewYaw = FMath::Fmod(NewYaw, 360.0f);
+
+		// 음수 값일 경우에는 양수로 변환합니다.
+		if (NewYaw < 0)
+		{
+			NewYaw += 360.0f;
+		}
+
+		// 새로운 회전값 생성
+		FRotator NewRotation = FRotator(CurrentRotation.Pitch, NewYaw, CurrentRotation.Roll);
+
+		// 액터의 회전 업데이트하기
+		ClickedActor->SetActorRotation(NewRotation);
+	}
+
+
+
 
 }
 
@@ -155,7 +218,7 @@ void AARCharacter::ray()
 
 			if (bActorHit && HitResult.GetActor())
 			{
-				GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::White,
+				GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::White,
 					HitResult.GetActor()->GetName());
 			}
 		}
@@ -184,8 +247,8 @@ void AARCharacter::ShowPlaneOutLine()
 
 FVector AARCharacter::GetTouchLocation(const FVector2D& touchPos)
 {
-	if(bCanSpawnActor)
-	{ 
+	if (bCanSpawnActor)
+	{
 		FVector	touchWorldPos, touchWorldDir;
 
 		// 터치의 스크린 좌표를 월드 좌표로 변환하기
@@ -209,21 +272,54 @@ FVector AARCharacter::GetTouchLocation(const FVector2D& touchPos)
 
 void AARCharacter::OnLeftMouseButtonPressed()
 {
-	// 클릭된 액터 가져오기 (마우스 커서 아래에 있는)
-	FHitResult HitResult;
-	UGameplayStatics::GetPlayerController(this, 0)->GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, false, HitResult);
-
-	if (HitResult.GetActor() && HitResult.GetActor()->IsA<ABed>())
+	if (isMoveStart)
 	{
-		ClickedActor = HitResult.GetActor();
-		DragStartLocation = ClickedActor->GetActorLocation();
-		bIsDragging = true;
+		// 클릭된 액터 가져오기 (마우스 커서 아래에 있는)
+		FHitResult HitResult;
+		UGameplayStatics::GetPlayerController(this, 0)->GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, false, HitResult);
+
+		if (HitResult.GetActor()!=nullptr && HitResult.GetActor()->IsA<ABed>())
+		{
+			ClickedActor = HitResult.GetActor();
+			DragStartLocation = ClickedActor->GetActorLocation();
+			bIsDragging = true;
+		}
 	}
+	
+	if (isRotStart)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("sdadwqefqegwrg"));
+		// 클릭된 액터 가져오기 (마우스 커서 아래에 있는)
+		FHitResult HitResult;
+		UGameplayStatics::GetPlayerController(this, 0)->GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, false, HitResult);
+
+		if (HitResult.GetActor() != nullptr && HitResult.GetActor()->IsA<ARotationArrrowActor>())
+		{
+			ClickedActor = HitResult.GetActor();
+			DragStartLocation = ClickedActor->GetActorLocation();
+			bIsDragging = true;
+
+			// ClickedActor의 이름을 로그에 출력
+			UE_LOG(LogTemp, Warning, TEXT("Clicked Actor: %s"), *ClickedActor->GetName());
+
+		}
+	}
+
 }
 
 void AARCharacter::OnLeftMouseButtonReleased()
 {
 	// 드래그 종료
 	bIsDragging = false;
-	UE_LOG(LogTemp, Warning, TEXT("sdqasdqwd"));
+
+	if (isMoveStart)
+	{
+		isMoveStart = false;
+	}
+
+	if (isRotStart)
+	{
+		isRotStart = false;
+		RotationArrowActor->SetActorHiddenInGame(true);
+	}
 }

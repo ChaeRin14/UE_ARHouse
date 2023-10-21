@@ -34,6 +34,13 @@ public:
 	UPROPERTY(VisibleAnywhere, meta=(BindWidget), Category = MySettings)
 	class UButton* btn_bed;
 
+	// 오브젝트 이동 버튼
+	UPROPERTY(VisibleAnywhere, meta=(BindWidget), Category = MySettings)
+	class UButton* btn_Move;
+	// 오브젝트 회전 버튼
+	UPROPERTY(VisibleAnywhere, meta=(BindWidget), Category = MySettings)
+	class UButton* btn_Rotation;
+
 	class ABed* bedActor;
 	bool isbedSpawn;
 
@@ -49,6 +56,11 @@ private:
 
 	UFUNCTION()
 	void Spawn_Bed();
+
+	UFUNCTION()
+	void MoveObj();
+	UFUNCTION()
+	void RotObj();
 
 
 	class AARCharacter* player;

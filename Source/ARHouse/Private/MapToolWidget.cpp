@@ -7,6 +7,7 @@
 #include <Kismet/GameplayStatics.h>
 #include "Bed.h"
 #include "MapToolManager.h"
+#include "RotationArrrowActor.h"
 
 void UMapToolWidget::NativeConstruct()
 {
@@ -24,8 +25,17 @@ void UMapToolWidget::NativeConstruct()
 
 	// 가구 - 침대
 	btn_bed->OnClicked.AddDynamic(this, &UMapToolWidget::Spawn_Bed);
+
+	// 오브젝트 이동
+	btn_Move->OnClicked.AddDynamic(this, &UMapToolWidget::MoveObj);
+	// 오브젝트 회전
+	btn_Rotation->OnClicked.AddDynamic(this, &UMapToolWidget::RotObj);
+
 	// 침대 버튼 꺼 두기
 	btn_bed->SetVisibility(ESlateVisibility::Hidden);
+
+
+	player = Cast<AARCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 }
 
 void UMapToolWidget::Object_furniture()
@@ -71,6 +81,32 @@ void UMapToolWidget::Spawn_Bed()
 	// 액터 스폰
 	bedActor = GetWorld()->SpawnActor<ABed>(ABed::StaticClass(), SpawnLocation, FRotator::ZeroRotator);
 
-	
+
+}
+
+void UMapToolWidget::MoveObj()
+{
+	if (player)
+	{
+		player->isMoveStart = true;
+	}
+
+}
+
+void UMapToolWidget::RotObj()
+{
+	if (player)
+	{
+		player->isRotStart = true;
+
+
+		if(player->isBedSpawn == false)
+		player->isBedSpawn = false;
+
+		if (player->RotationArrowActor != nullptr && player->RotationArrowActor->IsHidden())
+		{
+			player->RotationArrowActor->SetActorHiddenInGame(false);
+		}
+	}
 }
 

@@ -52,6 +52,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = MySettings)
 	TSubclassOf<AActor> chair_BP;
 
+	class ABed* bedActor;
+
+	class ARotationArrrowActor* RotationArrowActor;
 
 private:
 	AActor* spawnedIndicator;
@@ -75,17 +78,22 @@ private:
 	FVector GetTouchLocation(const FVector2D& touchPos);
 	
 	bool bCanSpawnActor = true;
-
 	
 protected:
    UPROPERTY(BlueprintReadOnly)
    AActor* ClickedActor = nullptr;
 
    FVector DragStartLocation; // 드래그 시작 위치
+   FVector DragEndPosition;
    bool bIsDragging = false;
 
 public:
    void OnLeftMouseButtonPressed();
    void OnLeftMouseButtonReleased();
+
+
+   bool isMoveStart=false;
+   bool isRotStart;
+   bool isBedSpawn = true;
 
 };
