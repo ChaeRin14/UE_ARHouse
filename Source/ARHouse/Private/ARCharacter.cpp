@@ -22,12 +22,16 @@ AARCharacter::AARCharacter()
 
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComp"));
 	SpringArmComp->SetupAttachment(RootComponent);
-	arCamComp = CreateDefaultSubobject<UCameraComponent>(TEXT("arCamComp"));
-	arCamComp->SetupAttachment(SpringArmComp);
+	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("arCamComp"));
+	CameraComponent->SetupAttachment(SpringArmComp);
 
 	AutoPossessPlayer = EAutoReceiveInput::Player0;
 
-
+	FlySpeed = 20;
+	PanSpeed = 10;
+	TiltSpeed = 10;
+	MovementSpeed = 1;
+	MaximumMovementSpeed = 100;
 
 }
 
@@ -46,6 +50,25 @@ void AARCharacter::BeginPlay()
 
 	// 핸드폰의 절전 모드를 끄기
 	UKismetSystemLibrary::ControlScreensaver(false);
+
+	FVector InitialPoint = CameraComponent->GetComponentLocation() + CameraComponent->GetForwardVector() * 2000;
+
+	// Calculate the start and end points for the vertical line trace
+	FVector StartLocation = InitialPoint;
+	FVector EndLocation = FVector(InitialPoint.X, InitialPoint.Y, InitialPoint.Z - 50000);
+
+	FCollisionQueryParams TraceParams(FName(TEXT("GroundTrace")), true, this);
+	TraceParams.bTraceComplex = true;
+	TraceParams.bReturnPhysicalMaterial = false;
+	FHitResult HitResult;
+
+	// Perform the line trace
+	if (GetWorld()->LineTraceSingleByChannel(HitResult, StartLocation, EndLocation, ECC_Visibility, TraceParams))
+	{
+		// Place the indicator marker at the hit location
+		PlaceIndicator(HitResult.Location);
+		OnHitLocationDetected(HitResult.Location);
+	}
 }
 
 // Called every frame
@@ -146,7 +169,8 @@ void AARCharacter::Tick(float DeltaTime)
 	}
 
 
-
+	UpdateIndicatorRotation();
+	DetectMouseMoveAtLocation();
 
 }
 
@@ -156,45 +180,18 @@ void AARCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 
-	PlayerInputComponent->BindAxis(TEXT("Horizontal"), this, &AARCharacter::Horizontal);
-	PlayerInputComponent->BindAxis(TEXT("Vertical"), this, &AARCharacter::Vertical);
+
 	PlayerInputComponent->BindAxis(TEXT("Turn"), this, &AARCharacter::Turn);
 	PlayerInputComponent->BindAxis(TEXT("LookUp"), this, &AARCharacter::LookUp);
-	PlayerInputComponent->BindAxis(TEXT("Zaxis"), this, &AARCharacter::Zaxis);
-
+	PlayerInputComponent->BindAxis(TEXT("Forward"), this, &AARCharacter::MoveForward);
+	PlayerInputComponent->BindAxis(TEXT("Right"), this, &AARCharacter::MoveRight);
+	PlayerInputComponent->BindAxis(TEXT("Tilt"), this, &AARCharacter::Tilt);
 	PlayerInputComponent->BindAction("MouseLeftButton", IE_Pressed, this, &AARCharacter::OnLeftMouseButtonPressed);
 	PlayerInputComponent->BindAction("MouseLeftButton", IE_Released, this, &AARCharacter::OnLeftMouseButtonReleased);
 
 	PlayerInputComponent->BindAction("Cast", IE_Pressed, this, &AARCharacter::ray);
 }
 
-
-void AARCharacter::Horizontal(float value)
-{
-	AddMovementInput(GetActorRightVector(), value);
-}
-
-void AARCharacter::Vertical(float value)
-{
-	AddMovementInput(GetActorForwardVector(), value);
-}
-
-void AARCharacter::Turn(float value)
-{
-	AddControllerYawInput(value);
-}
-
-void AARCharacter::LookUp(float AxisValue)
-{
-	FRotator NewRotation = GetControlRotation();
-	NewRotation.Pitch = FMath::Clamp(NewRotation.Pitch + AxisValue, -90.0f, 90.0f);
-	SetActorRotation(NewRotation);
-}
-
-void AARCharacter::Zaxis(float value)
-{
-	AddMovementInput(GetActorUpVector(), value);
-}
 
 void AARCharacter::ray()
 {
@@ -321,5 +318,180 @@ void AARCharacter::OnLeftMouseButtonReleased()
 	{
 		isRotStart = false;
 		RotationArrowActor->SetActorHiddenInGame(true);
+	}
+}
+
+void AARCharacter::MoveForward(float Value)
+{
+	if (Value != 0.0f)
+	{
+		FVector CameraLocation = CameraComponent->GetComponentLocation();
+		FVector TraceEndLocation = CameraLocation + UKismetMathLibrary::GetForwardVector(CameraComponent->GetRelativeRotation()) * 5000;
+		FRotator ForwardRotation = UKismetMathLibrary::FindLookAtRotation(CameraLocation, TraceEndLocation);
+		FVector Direction = UKismetMathLibrary::GetForwardVector(ForwardRotation);
+		AddActorLocalOffset(Direction * Value * FlySpeed);
+	}
+}
+
+void AARCharacter::MoveRight(float Value)
+{
+	if (Value != 0.0f)
+	{
+		FVector CameraLocation = CameraComponent->GetComponentLocation();
+		FVector TraceEndLocation = CameraLocation + UKismetMathLibrary::GetRightVector(CameraComponent->GetRelativeRotation()) * 5000;
+		FRotator ForwardRotation = UKismetMathLibrary::FindLookAtRotation(CameraLocation, TraceEndLocation);
+		FVector Direction = UKismetMathLibrary::GetForwardVector(ForwardRotation);
+		AddActorLocalOffset(Direction * Value * FlySpeed);
+	}
+}
+
+void AARCharacter::Turn(float Value)
+{
+	CameraComponent->AddRelativeRotation(FRotator(0, Value*2, 0));
+
+}
+
+void AARCharacter::LookUp(float Value)
+{
+	FRotator CameraRotation = CameraComponent->GetRelativeRotation();
+	CameraRotation.Pitch = FMath::Clamp(CameraRotation.Pitch + Value*2, -80, 80);
+	CameraComponent->SetRelativeRotation(CameraRotation);
+}
+
+void AARCharacter::Tilt(float Value)
+{
+	if (Value != 0.0f)
+	{
+		FVector TiltMovement = FVector(0, 0, Value * TiltSpeed);
+		AddActorLocalOffset(TiltMovement);
+	}
+}
+
+void AARCharacter::ChangeMovementSpeed(float Value)
+{
+	MovementSpeed = MovementSpeed + Value * 0.01;
+	MovementSpeed = FMath::Clamp(MovementSpeed, 0.01, MaximumMovementSpeed);
+}
+
+UWorld* AARCharacter::GetGameWorld()
+{
+	if (UGameViewportClient* Viewport = GEngine->GameViewport)
+	{
+		FWorldContext* worldcontext = GEngine->GetWorldContextFromGameViewport(Viewport);
+		UWorld* world = worldcontext->World();
+		return world;
+	}
+
+	return nullptr;
+}
+
+
+bool AARCharacter::CheckHitAtMouseCursor(FHitResult& objecthit)
+{
+	if (UWorld* world = GetGameWorld())
+	{
+
+		TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes;
+		ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECC_WorldStatic));
+		ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECC_Visibility));
+		ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECC_WorldDynamic));
+
+		if (APlayerController* PlayerController = UGameplayStatics::GetPlayerController(world, 0))
+		{
+			PlayerController->HitResultTraceDistance = 10000000;
+			bool isactorhit = PlayerController->GetHitResultUnderCursorForObjects(ObjectTypes, true, objecthit);
+			return isactorhit;
+		}
+	}
+	return false;
+
+}
+
+
+void AARCharacter::DetectMouseHitLocation()
+{
+	FHitResult HitResult;
+	if (CheckHitAtMouseCursor(HitResult))
+	{
+		if (AActor* HitActor = HitResult.GetActor())
+		{
+			if (HitActor->IsA(AStaticMeshActor::StaticClass()))
+			{
+				PlaceIndicator(HitResult.Location);
+				OnHitLocationDetected(HitResult.Location);
+			}
+			else
+			{
+				OnHitActorDetected(HitActor, HitResult.GetComponent());
+			}
+		}
+
+	}
+
+}
+
+void AARCharacter::DetectMouseMoveAtLocation()
+{
+	FHitResult HitResult;
+	if (CheckHitAtMouseCursor(HitResult))
+	{
+		if (AActor* HitActor = HitResult.GetActor())
+		{
+			OnHoverActorDetected(HitActor, HitResult.GetComponent());
+		}
+
+	}
+}
+
+void AARCharacter::UpdateIndicatorRotation()
+{
+	if (IndicatorActor)
+	{
+		FVector CameraLocation = CameraComponent->GetComponentLocation();
+		FVector IndicatorLocation = IndicatorActor->GetActorLocation();
+
+		FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(CameraLocation, IndicatorLocation);
+		LookAtRotation.Yaw -= 90;
+		IndicatorActor->SetActorRotation(FRotator(0, LookAtRotation.Yaw, 0));
+	}
+}
+
+void AARCharacter::DestroyIndicator()
+{
+	if (IndicatorActor)
+	{
+		IndicatorActor->Destroy();
+		IndicatorActor = nullptr;
+	}
+}
+
+void AARCharacter::PlaceIndicator(const FVector& Location)
+{
+	// Get a reference to the world
+	if (UWorld* World = GetGameWorld())
+	{
+		if (IndicatorMarkerMesh)
+		{
+			DestroyIndicator();
+
+			FActorSpawnParameters SpawnParams;
+			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+			AActor* IActor = World->SpawnActor<AStaticMeshActor>(Location, FRotator::ZeroRotator, SpawnParams);
+			IndicatorActor = Cast<AStaticMeshActor>(IActor);
+			IndicatorActor->SetMobility(EComponentMobility::Movable);
+
+			// Set the static mesh for the spawned actor
+			if (UStaticMeshComponent* StaticMeshComponent = IndicatorActor->GetStaticMeshComponent())
+			{
+				StaticMeshComponent->SetStaticMesh(IndicatorMarkerMesh);
+				FBoxSphereBounds Bounds = StaticMeshComponent->Bounds;
+				FVector NewLocation = Location;
+				NewLocation.Z += Bounds.BoxExtent.Z + 10;
+				IndicatorActor->SetActorLocation(NewLocation);
+
+				// Update the indicator rotation to face the camera
+				UpdateIndicatorRotation();
+			}
+		}
 	}
 }
