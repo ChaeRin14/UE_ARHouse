@@ -29,6 +29,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = MySettings)
 	TSubclassOf<UUserWidget> widget_BP; 
 
+	UPROPERTY(EditAnywhere, Category = MySettings)
+	USoundBase* level1_BGM;
+
 private:
 	AActor* spawnedIndicator;
 	UUserWidget* widget_inst;

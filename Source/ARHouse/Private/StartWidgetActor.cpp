@@ -4,6 +4,7 @@
 #include "StartWidgetActor.h"
 #include "Widget_CreateRoom.h"
 #include "ARBlueprintLibrary.h"
+#include <Kismet/GameplayStatics.h>
 
 
 AStartWidgetActor::AStartWidgetActor()
@@ -18,6 +19,10 @@ void AStartWidgetActor::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	if (level1_BGM)
+	{
+		UGameplayStatics::PlaySound2D(this, level1_BGM);
+	}
 }
 
 
@@ -47,6 +52,7 @@ void AStartWidgetActor::SetIndicator()
 					{
 						// 위젯을 화면에 추가
 						widget_inst->AddToViewport();
+						
 					}
 				}
 				spawnedIndicator = GetWorld()->SpawnActor<AActor>(indicator, hitInfos[0].GetLocalToWorldTransform());
@@ -57,6 +63,17 @@ void AStartWidgetActor::SetIndicator()
 				widget_inst->SetVisibility(ESlateVisibility::Visible);
 				spawnedIndicator->SetActorHiddenInGame(false);
 				spawnedIndicator->SetActorTransform(hitInfos[0].GetLocalToWorldTransform());
+
+				if (spawnedIndicator)
+				{
+					FVector SpawnedLocation = spawnedIndicator->GetActorLocation();
+					UE_LOG(LogTemp, Warning, TEXT("Spawned Indicator Location: %s"), *SpawnedLocation.ToString());
+				}
+				else
+				{
+					UE_LOG(LogTemp, Error, TEXT("Failed to spawn the indicator."));
+				}
+
 			}
 		}
 		else

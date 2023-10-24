@@ -20,12 +20,12 @@ void UWidget_CreateRoom::NativeConstruct()
 	text_bulid->SetVisibility(ESlateVisibility::Hidden);
 	pro_Loading->SetVisibility(ESlateVisibility::Hidden);
 
-	UAudioComponent* AudioComp = NewObject<UAudioComponent>(this);
-	if (AudioComp)
-	{
-		AudioComp->SetSound(sound_BGM);
-		AudioComp->Play();
-	}
+// 	UAudioComponent* AudioComp = NewObject<UAudioComponent>(this);
+// 	if (AudioComp)
+// 	{
+// 		AudioComp->SetSound(sound_BGM);
+// 		AudioComp->Play();
+// 	}
 }
 
 void UWidget_CreateRoom::OnClickCreateButton()

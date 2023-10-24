@@ -42,8 +42,8 @@ public:
 	UPROPERTY(EditAnywhere, Category="MySettings")
 	bool bIsClicked = false;
 
-	UPROPERTY(EditAnywhere, Category="MySettings")
-	class USoundBase* sound_BGM;
+// 	UPROPERTY(EditAnywhere, Category="MySettings")
+// 	class USoundBase* sound_BGM;
 
 	UFUNCTION()
 	void OnClickCreateButton();
