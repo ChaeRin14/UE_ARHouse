@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Engine/World.h"
+#include "Engine/StaticMeshActor.h"
 #include "DrawDebugHelpers.h"
 #include "ARCharacter.generated.h"
 
@@ -14,19 +15,18 @@ class ARHOUSE_API AARCharacter : public ACharacter
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this character's properties
 	AARCharacter();
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	void PlaceIndicator(const FVector& Location);
 
 public:	
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	void UpdateIndicatorRotation();
 
 	float speed = 500;
 	FVector Dir;
@@ -41,7 +41,7 @@ public:
 	class USpringArmComponent* SpringArmComp;
 	
 	UPROPERTY(EditAnywhere, Category = MySettings)
-	class UCameraComponent* arCamComp;
+	class UCameraComponent* CameraComponent;
 
 	UPROPERTY(EditAnywhere, Category = MySettings)
 	class APlayerController* pc;
@@ -60,14 +60,6 @@ private:
 	AActor* spawnedIndicator;
 	AActor* chair_inst;
 	UUserWidget* widget_inst;
-
-	void Horizontal(float value);
-	void Vertical(float value);
-
-	void Turn(float value);
-	void LookUp(float value);
-
-	void Zaxis(float value);
 
 	void ray();
 	
@@ -96,4 +88,65 @@ public:
    bool isRotStart;
    bool isBedSpawn = true;
 
+protected:
+	UPROPERTY()
+	AStaticMeshActor* IndicatorActor;
+
+	public:
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnHitLocationDetected(FVector HitLocation);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnHitActorDetected(AActor* HitActor, UPrimitiveComponent* HitComponent);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnHoverActorDetected(AActor* HoverActor, UPrimitiveComponent* HoveredComponent);
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Movement)
+	UStaticMesh* IndicatorMarkerMesh;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Movement)
+	float FlySpeed;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Movement)
+	float PanSpeed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Movement)
+	float TiltSpeed;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Movement)
+	float MovementSpeed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Movement)
+	float MaximumMovementSpeed;
+
+	UFUNCTION(BlueprintCallable, Category="Indicator")
+	void DestroyIndicator();
+	
+	UFUNCTION(BlueprintCallable, Category="FlyCamCharacter")
+	void MoveForward(float Value);
+
+	UFUNCTION(BlueprintCallable, Category="FlyCamCharacter")
+	void MoveRight(float Value);
+
+	UFUNCTION(BlueprintCallable, Category="FlyCamCharacter")
+	void Turn(float Value);
+
+	UFUNCTION(BlueprintCallable, Category="FlyCamCharacter")
+	void LookUp(float Value);
+
+	UFUNCTION(BlueprintCallable, Category="FlyCamCharacter")
+	void Tilt(float Value);
+
+	
+	void ChangeMovementSpeed(float Value);
+	UWorld* GetGameWorld();
+	bool CheckHitAtMouseCursor(FHitResult& objecthit);
+
+	UFUNCTION(BlueprintCallable, Category="FlyCamCharacter")
+	void DetectMouseHitLocation();
+
+	UFUNCTION(BlueprintCallable, Category="FlyCamCharacter")
+	void DetectMouseMoveAtLocation();
 };
