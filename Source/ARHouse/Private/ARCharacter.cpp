@@ -27,10 +27,10 @@ AARCharacter::AARCharacter()
 
 	AutoPossessPlayer = EAutoReceiveInput::Player0;
 
-	FlySpeed = 20;
+	FlySpeed = 5;
 	PanSpeed = 10;
-	TiltSpeed = 10;
-	MovementSpeed = 1;
+	TiltSpeed = 7;
+	MovementSpeed = 0.4;
 	MaximumMovementSpeed = 100;
 
 }
