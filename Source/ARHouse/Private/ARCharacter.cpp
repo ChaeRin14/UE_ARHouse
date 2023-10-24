@@ -71,7 +71,7 @@ void AARCharacter::Tick(float DeltaTime)
 		GetWorld()->SpawnActor<AActor>(chair_BP, GetTouchLocation(firstTouch), FRotator::ZeroRotator, param);
 	}
 
-
+	// 침대 이동
 	if (bIsDragging && ClickedActor && isMoveStart)
 	{
 		FVector WorldOrigin;
@@ -87,6 +87,11 @@ void AARCharacter::Tick(float DeltaTime)
 		FVector DragDelta = DragEndPosition - DragStartLocation;
 		DragDelta.Z = 0;
 		ClickedActor->SetActorLocation(DragStartLocation + DragDelta);
+
+		if (isRotStart)
+		{
+			
+		}
 	}
 
 	// 회전 버튼을 누르면 회전 오브젝트가 스폰되게
@@ -99,9 +104,10 @@ void AARCharacter::Tick(float DeltaTime)
 			FVector SpawnLocation = bedActor->GetActorLocation() + FVector(0, 0, 70);; // 스폰 위치 설정 (bedActor의 위치로 설정)
 			FRotator SpawnRotation = FRotator::ZeroRotator; // 스폰 회전 설정
 
-			RotationArrowActor = GetWorld()->SpawnActor<ARotationArrrowActor>(SpawnLocation, SpawnRotation);
-			bedActor->SetActorLocation(FVector(0, 0, -70));
-
+				RotationArrowActor = GetWorld()->SpawnActor<ARotationArrrowActor>(SpawnLocation, SpawnRotation);
+				bedActor->SetActorLocation(FVector(0, 0, -70));
+			
+			
 			if (RotationArrowActor && bedActor)
 			{
 				bedActor->AttachToComponent(RotationArrowActor->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
@@ -118,12 +124,12 @@ void AARCharacter::Tick(float DeltaTime)
 		float DeltaX = DragEndPosition.X - DragStartLocation.X;
 
 		// 회전 속도 조절을 위한 변수 설정
-		float RotationSpeed = 1.0f;  // 원하는 회전 속도 값으로 변경해주세요
+		float RotationSpeed = 1.0f;
 
 		// 프레임당 회전량 계산
 		float RotationAmount = -DeltaX * RotationSpeed * GetWorld()->GetDeltaSeconds();  // 음수로 변경
 
-		// 액터의 현재 회전값을 가져옵니다.
+		// 액터의 현재 회전값
 		FRotator CurrentRotation = ClickedActor->GetActorRotation();
 
 		// Yaw 회전값을 계산하여 업데이트합니다.
@@ -320,6 +326,6 @@ void AARCharacter::OnLeftMouseButtonReleased()
 	if (isRotStart)
 	{
 		isRotStart = false;
-		RotationArrowActor->SetActorHiddenInGame(true);
+		RotationArrowActor->Destroy();
 	}
 }

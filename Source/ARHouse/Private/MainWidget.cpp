@@ -66,6 +66,7 @@ void UMainWidget::FileOn()
 
                 UE_LOG(LogTemp, Warning, TEXT("File saved to: %s"), *DestinationFilePath);
                 btn_fileImage->SetVisibility(ESlateVisibility::Hidden);
+
                 PostImageRequest();
             }
             else
@@ -96,6 +97,7 @@ void UMainWidget::FileOn()
 
 }
 
+// 이미지 저장
 void UMainWidget::PostImageRequest()
 {
     TArray<uint8> FileData;
@@ -126,11 +128,14 @@ void UMainWidget::PostImageRequest()
 
         if (FileExtension.Equals("png", ESearchCase::IgnoreCase))
         {
+
+            // 이미지 보내는 함수로 이동
             httpReqActor->PostImage_Png(baseURL, LoadedTexture);
             UE_LOG(LogTemp, Warning, TEXT("png : %s"), *baseURL);
         }
         else
         {
+            // 이미지 보내는 함수로 이동
             httpReqActor->PostImage_Jpg(baseURL, LoadedTexture);
             UE_LOG(LogTemp, Warning, TEXT("jpg : %s"), *baseURL);
         }

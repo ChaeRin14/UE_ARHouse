@@ -36,5 +36,5 @@ private:
 	class AHttpRequestActor* httpReqActor;
 
 	// ¼­¹ö api
-	FString baseURL = "https://b3dd-59-13-192-130.ngrok-free.app/test_api/in_img_out_json";
+	FString baseURL = "192.168.0.8:8080/ai/drawing/process";
 };

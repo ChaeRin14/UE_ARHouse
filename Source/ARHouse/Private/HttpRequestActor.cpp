@@ -11,7 +11,6 @@
 #include "MainWidget.h"
 
 
-
 // 통신용 클래스
 AHttpRequestActor::AHttpRequestActor()
 {
@@ -189,8 +188,6 @@ void AHttpRequestActor::GetImage(const FString url)
 	req->SetHeader(TEXT("Content-Type"), TEXT("image/jpeg"));
 	req->OnProcessRequestComplete().BindUObject(this, &AHttpRequestActor::OnGetImageData);
 	req->ProcessRequest();
-
-
 }
 
 // 이미지 가져오기
@@ -217,9 +214,16 @@ void AHttpRequestActor::SaveImage(const UTexture2D* tex)
 
 }
 
-// 텍스처 포스트 함수
-void AHttpRequestActor::PostImage_Png(const FString url, const UTexture2D* tex)
+void AHttpRequestActor::PostImage_Png(const FString& url, const UTexture2D* tex)
 {
+	UE_LOG(LogTemp, Warning, TEXT("PostImage_Png"));
+
+	if (tex == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Texture is null"));
+		return;
+	}
+
 	// 텍스처의 각 픽셀 컬러 정보를 배열에 담는다
 	FTexture2DMipMap mipData = tex->GetPlatformData()->Mips[0];
 
@@ -235,26 +239,48 @@ void AHttpRequestActor::PostImage_Png(const FString url, const UTexture2D* tex)
 		FMemory::Memcpy(imgArr.GetData(), pixelData, imgArr.Num() * sizeof(FColor));
 		mipData.BulkData.Unlock();
 
+		FString Path = FPaths::Combine(FPaths::ProjectContentDir(), TEXT("Data"), url);
+
 		// 이미지 바이트 배열을 압축한다
 		TArray<uint8> compressedImage;
-		FImageUtils::ThumbnailCompressImageArray(width, height, imgArr, compressedImage);
+		FFileHelper::LoadFileToArray(compressedImage, *Path);
 
-		// 이미지 바이트 배열을 포스트 한다
+		// 멀티파트 폼 데이터 생성
+		FString boundary = "----BOUNDARY";
+		FString contentDispositionHeader = "\r\nContent-Disposition: form-data; name=\"file\"; filename=\"image.png\"\r\n";
+		FString contentTypeHeader = "Content-Type: application/octet-stream\r\n\r\n";
+
+		FString endBoundary = "\r\n----BOUNDARY--\r\n";
+
+		TArray<uint8> data;
+
+		data.Append((uint8*)TCHAR_TO_UTF8(*boundary), boundary.Len());
+		data.Append((uint8*)TCHAR_TO_UTF8(*contentDispositionHeader), contentDispositionHeader.Len());
+		data.Append((uint8*)TCHAR_TO_UTF8(*contentTypeHeader), contentTypeHeader.Len());
+
+		data.Append(compressedImage);
+
+		data.Append((uint8*)TCHAR_TO_UTF8(*endBoundary), endBoundary.Len());
+
+
 		TSharedRef<IHttpRequest> req = FHttpModule::Get().CreateRequest();
+
 		req->SetURL(url);
-		req->SetVerb("POST");
-		req->SetHeader(TEXT("Content-Type"), TEXT("image/png"));
-		req->SetContent(compressedImage);
+		req->SetVerb(TEXT("POST"));
+		req->SetHeader(TEXT("Content-Type"), TEXT("multipart/form-data;boundary=") + FString(boundary));
+		req->SetContent(data);
+
 		req->OnProcessRequestComplete().BindUObject(this, &AHttpRequestActor::OnPostImageData);
+
 		req->ProcessRequest();
 	}
 }
 
 
-
 // 텍스처 포스트 함수
 void AHttpRequestActor::PostImage_Jpg(const FString url, const UTexture2D* tex)
 {
+	UE_LOG(LogTemp, Warning, TEXT("PostImage_Jpg"));
 	// 텍스처의 각 픽셀 컬러 정보를 배열에 담는다
 	FTexture2DMipMap mipData = tex->GetPlatformData()->Mips[0];
 
@@ -287,7 +313,7 @@ void AHttpRequestActor::PostImage_Jpg(const FString url, const UTexture2D* tex)
 
 void AHttpRequestActor::OnPostImageData(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully)
 {
-	UE_LOG(LogTemp, Warning, TEXT("%s"), bConnectedSuccessfully ? *Response->GetContentAsString() : *FString::Printf(TEXT("Response code: %d"), Response->GetResponseCode()));
+	UE_LOG(LogTemp, Warning, TEXT("%s"), bConnectedSuccessfully ? *Response->GetContentAsString() : *FString::Printf(TEXT("Response code: %d"), Response->GetResponseCode()));  
 
 }
 
