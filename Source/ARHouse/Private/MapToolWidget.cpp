@@ -31,6 +31,10 @@ void UMapToolWidget::NativeConstruct()
 	// 오브젝트 회전
 	btn_Rotation->OnClicked.AddDynamic(this, &UMapToolWidget::RotObj);
 
+
+	btn_save->OnClicked.AddDynamic(this, &UMapToolWidget::Object_save);
+	btn_load->OnClicked.AddDynamic(this, &UMapToolWidget::Object_load);
+
 	// 침대 버튼 꺼 두기
 	btn_bed->SetVisibility(ESlateVisibility::Hidden);
 
@@ -100,12 +104,37 @@ void UMapToolWidget::RotObj()
 		player->isRotStart = true;
 
 
-		if(player->isBedSpawn == false)
-		player->isBedSpawn = false;
+		if (player->isBedSpawn == false)
+			player->isBedSpawn = false;
 
 		if (player->RotationArrowActor != nullptr && player->RotationArrowActor->IsHidden())
 		{
 			player->RotationArrowActor->SetActorHiddenInGame(false);
+		}
+	}
+}
+
+void UMapToolWidget::Object_save()
+{
+	if (player != nullptr)
+	{
+		savelot = player->GetActorLocation();
+		UE_LOG(LogTemp, Warning, TEXT("Save player Location: %s"), *savelot.ToString());
+	}
+
+}
+
+void UMapToolWidget::Object_load()
+{
+	if (GetWorld() != nullptr)
+	{
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+
+		bedActor = GetWorld()->SpawnActor<ABed>(ABed::StaticClass(), savelot, FRotator::ZeroRotator, SpawnParams);
+		if (bedActor != nullptr)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Save bedActor Location: %s"), *bedActor->GetActorLocation().ToString());
 		}
 	}
 }

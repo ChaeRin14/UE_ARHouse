@@ -100,6 +100,7 @@ void UMainWidget::FileOn()
 // 이미지 저장
 void UMainWidget::PostImageRequest()
 {
+    // 보낼 파일 데이터 배열
     TArray<uint8> FileData;
 
     if (FFileHelper::LoadFileToArray(FileData, *DestinationFilePath))
@@ -108,15 +109,18 @@ void UMainWidget::PostImageRequest()
 
         UTexture2D* LoadedTexture = nullptr;
 
+        // 확장자가 png라면
         if (FileExtension.Equals("png", ESearchCase::IgnoreCase))
         {
+            // 바이트 배열 데이터를 텍스처로 전환한다
             LoadedTexture = FImageUtils::ImportBufferAsTexture2D(FileData);
         }
         else
         {
+            // 아니면 파일 경로에서 직접 텍스처를 가져온다
             LoadedTexture = FImageUtils::ImportFileAsTexture2D(DestinationFilePath);
         }
-
+        // 텍스처가 없을 때 찍히는 로그
         if (LoadedTexture == nullptr)
         {
             UE_LOG(LogTemp, Error, TEXT("Failed to load image file: %s"), *DestinationFilePath);
@@ -126,6 +130,7 @@ void UMainWidget::PostImageRequest()
         // 텍스처 사용 예시: 로그 출력
         UE_LOG(LogTemp, Warning, TEXT("Loaded texture dimensions: %dx%d"), LoadedTexture->GetSizeX(), LoadedTexture->GetSizeY());
 
+        // png이면 png 포스트 함수로 이동
         if (FileExtension.Equals("png", ESearchCase::IgnoreCase))
         {
 
@@ -133,14 +138,17 @@ void UMainWidget::PostImageRequest()
             httpReqActor->PostImage_Png(baseURL, LoadedTexture);
             UE_LOG(LogTemp, Warning, TEXT("png : %s"), *baseURL);
         }
+        // jpg이면 jpg 포스트 함수로 이동
         else
         {
             // 이미지 보내는 함수로 이동
             httpReqActor->PostImage_Jpg(baseURL, LoadedTexture);
             UE_LOG(LogTemp, Warning, TEXT("jpg : %s"), *baseURL);
+
+            save =  httpReqActor->GetActorLocation();
         }
 
-        // 필요한 작업 수행 후 텍스처 사용이 끝나면 제거해야 함
+        // 필요한 작업 수행 후 텍스처 사용이 끝나면 제거해야 함 == 메모리 누수 방지
         LoadedTexture->RemoveFromRoot();
     }
     else

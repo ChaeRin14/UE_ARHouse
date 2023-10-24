@@ -41,9 +41,17 @@ public:
 	UPROPERTY(VisibleAnywhere, meta=(BindWidget), Category = MySettings)
 	class UButton* btn_Rotation;
 
+	
+	UPROPERTY(VisibleAnywhere, meta=(BindWidget), Category = MySettings)
+	class UButton* btn_save;
+	
+	UPROPERTY(VisibleAnywhere, meta=(BindWidget), Category = MySettings)
+	class UButton* btn_load;
+
 	class ABed* bedActor;
 	bool isbedSpawn;
 
+	FVector savelot;
 private:
 	UFUNCTION()
 	void Object_furniture();
@@ -61,6 +69,12 @@ private:
 	void MoveObj();
 	UFUNCTION()
 	void RotObj();
+
+	
+	UFUNCTION()
+	void Object_save();
+	UFUNCTION()
+	void Object_load();
 
 
 	class AARCharacter* player;

@@ -51,4 +51,7 @@ public:
 	void AsyncLevelLoad(const FString& levelPath, const FString& levelName);
 	void OnFinishedLevelLoad(const FString levelName);
 
+
+	class ABed* bedActor;
+
 };

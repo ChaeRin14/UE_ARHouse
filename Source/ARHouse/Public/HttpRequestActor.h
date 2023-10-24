@@ -28,9 +28,10 @@ public:
 	// 이미지 저장하기
 	void SaveImage(const UTexture2D* tex);
 	// 이미지 보내기
-	UFUNCTION()
 	void PostImage_Png(const FString& url, const UTexture2D* tex);
 	void PostImage_Jpg(const FString url, const UTexture2D* tex);
+	// FBX 파일 받기
+	void GetFBXFile(const FString& url, const FString& savePath);
 
 	
 private:
@@ -41,6 +42,7 @@ private:
 	void OnPostData(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully);
 	void OnGetImageData(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully);
 	void OnPostImageData(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully);
+	void FBXFileDownload(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully);
 
 	UPROPERTY()
 	class AARHouseGameModeBase* gm;
