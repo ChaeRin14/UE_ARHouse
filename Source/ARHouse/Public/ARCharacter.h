@@ -83,10 +83,14 @@ public:
    void OnLeftMouseButtonPressed();
    void OnLeftMouseButtonReleased();
 
+   void FBXImport();
+
 
    bool isMoveStart=false;
    bool isRotStart;
    bool isBedSpawn = true;
+
+
 
 protected:
 	UPROPERTY()
