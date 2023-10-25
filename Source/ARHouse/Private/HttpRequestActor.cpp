@@ -214,14 +214,13 @@ void AHttpRequestActor::SaveImage(const UTexture2D* tex)
 
 }
 
-// 텍스처 포스트 함수 url : 서버 주소
+
 void AHttpRequestActor::PostImage_Png(const FString& url, const UTexture2D* tex)
 {
-
 	UE_LOG(LogTemp, Warning, TEXT("PostImage_Png"));
+
 	// 텍스처의 각 픽셀 컬러 정보를 배열에 담는다
 	FTexture2DMipMap mipData = tex->GetPlatformData()->Mips[0];
-
 	TArray<FColor> imgArr;
 	int32 width = mipData.SizeX;
 	int32 height = mipData.SizeY;
@@ -238,14 +237,17 @@ void AHttpRequestActor::PostImage_Png(const FString& url, const UTexture2D* tex)
 		TArray<uint8> compressedImage;
 		FImageUtils::ThumbnailCompressImageArray(width, height, imgArr, compressedImage);
 
-		// 이미지 바이트 배열을 포스트 한다
-		TSharedRef<IHttpRequest> req = FHttpModule::Get().CreateRequest();
-		req->SetURL(url);
-		req->SetVerb("POST");
-		req->SetHeader(TEXT("Content-Type"), TEXT("image/png"));
-		req->SetContent(compressedImage);
-		req->OnProcessRequestComplete().BindUObject(this, &AHttpRequestActor::OnPostImageData);
-		req->ProcessRequest();
+		// 이미지 바이트 배열을 Base64 인코딩한다
+		FString base64Image = FBase64::Encode(compressedImage);
+
+		// 이미지 데이터를 포스트한다
+		TSharedRef<IHttpRequest> Req = FHttpModule::Get().CreateRequest();
+		Req->SetURL(url);
+		Req->SetVerb(TEXT("POST"));
+		Req->SetHeader(TEXT("Content-Type"), TEXT("image/png"));
+		Req->SetContent(compressedImage);
+		Req->OnProcessRequestComplete().BindUObject(this, &AHttpRequestActor::OnPostImageData);
+		Req->ProcessRequest();
 	}
 }
 
@@ -282,25 +284,28 @@ void AHttpRequestActor::PostImage_Jpg(const FString url, const UTexture2D* tex)
 		req->SetContent(compressedImage);
 		req->OnProcessRequestComplete().BindUObject(this, &AHttpRequestActor::OnPostImageData);
 		req->ProcessRequest();
+
+		// 서버에서 fbx 파일 받아오기 
+		GetFBXFile(url, saveFBXurl);
 	}
 }
 
 void AHttpRequestActor::OnPostImageData(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully)
 {
-	UE_LOG(LogTemp, Warning, TEXT("%s"), bConnectedSuccessfully ? *Response->GetContentAsString() : *FString::Printf(TEXT("Response code: %d"), Response->GetResponseCode()));  
+	UE_LOG(LogTemp, Warning, TEXT("%s"), bConnectedSuccessfully ? *Response->GetContentAsString() : *FString::Printf(TEXT("Response code: %d"), Response->GetResponseCode()));
 
 }
 
 // FBX 파일 서버에서 가져오기
 void AHttpRequestActor::GetFBXFile(const FString& url, const FString& savePath)
 {
+	UE_LOG(LogTemp, Warning, TEXT("GetFBXFile"));
 	TSharedRef<IHttpRequest> req = FHttpModule::Get().CreateRequest();
 	req->SetURL(url);
 	req->SetVerb("GET");
 	req->SetHeader(TEXT("Content-Type"), TEXT("application/octet-stream"));
 	req->OnProcessRequestComplete().BindUObject(this, &AHttpRequestActor::FBXFileDownload);
 	req->ProcessRequest();
-	\
 }
 
 
@@ -309,25 +314,7 @@ void AHttpRequestActor::FBXFileDownload(FHttpRequestPtr Request, FHttpResponsePt
 {
 	if (bConnectedSuccessfully && Response.IsValid() && Response->GetResponseCode() == EHttpResponseCodes::Ok)
 	{
-		TArray<uint8> fileData = Response->GetContent();
-
-		// 저장할 경로와 이름 설정
-		FString savePath = FPaths::Combine(FPaths::ProjectContentDir(), TEXT("FBXFolder"), TEXT("myModel.fbx"));
-
-		// 파일 저장이 됐다면
-		if (FFileHelper::SaveArrayToFile(fileData, *savePath))
-		{
-			UE_LOG(LogTemp, Warning, TEXT("FBX file downloaded and saved successfully: %s"), *savePath);
-			// 성공적으로 저장되었으므로 이후 작업 수행 가능
-
-
-			// maptool 맵에 import 하기
-		}
-		else
-		{
-			// 실패
-			UE_LOG(LogTemp, Error, TEXT("Failed to save the downloaded FBX file."));
-		}
+		isFBXLoad = true;
 	}
 	else
 	{

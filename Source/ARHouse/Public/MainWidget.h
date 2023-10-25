@@ -25,7 +25,6 @@ public:
 	FString DestinationFilePath;
 	FString SourceFilePath;
 
-	FVector save;
 
 private:
 	UFUNCTION()
@@ -37,5 +36,5 @@ private:
 	class AHttpRequestActor* httpReqActor;
 
 	// ¼­¹ö api
-	FString baseURL = "192.168.0.50:8080/ai/drawing/process";
+	FString baseURL = "172.17.107.149:8080/ai/drawing/process";
 };

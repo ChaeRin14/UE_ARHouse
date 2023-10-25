@@ -33,6 +33,11 @@ public:
 	// FBX 파일 받기
 	void GetFBXFile(const FString& url, const FString& savePath);
 
+	UPROPERTY(BlueprintReadWrite)
+	FString saveFBXurl = "D:\\ARHouse\\UE_ARHouse\\Saved\\PersistentDownloadDir";
+
+	UPROPERTY(BlueprintReadWrite)
+	bool isFBXLoad = false;
 	
 private:
 	// 간혹가다 안 먹힐 때가 있다 안 먹히면 원래 방식으로 하면 됨

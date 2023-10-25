@@ -33,7 +33,6 @@ void UMapToolWidget::NativeConstruct()
 
 
 	btn_save->OnClicked.AddDynamic(this, &UMapToolWidget::Object_save);
-	btn_load->OnClicked.AddDynamic(this, &UMapToolWidget::Object_load);
 
 	// 침대 버튼 꺼 두기
 	btn_bed->SetVisibility(ESlateVisibility::Hidden);
@@ -122,20 +121,5 @@ void UMapToolWidget::Object_save()
 		UE_LOG(LogTemp, Warning, TEXT("Save player Location: %s"), *savelot.ToString());
 	}
 
-}
-
-void UMapToolWidget::Object_load()
-{
-	if (GetWorld() != nullptr)
-	{
-		FActorSpawnParameters SpawnParams;
-		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-
-		bedActor = GetWorld()->SpawnActor<ABed>(ABed::StaticClass(), savelot, FRotator::ZeroRotator, SpawnParams);
-		if (bedActor != nullptr)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Save bedActor Location: %s"), *bedActor->GetActorLocation().ToString());
-		}
-	}
 }
 
