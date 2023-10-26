@@ -56,6 +56,9 @@ public:
 
 	class ARotationArrrowActor* RotationArrowActor;
 
+	bool bIsRotOnly = false;
+
+
 private:
 	AActor* spawnedIndicator;
 	AActor* chair_inst;
