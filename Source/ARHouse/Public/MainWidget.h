@@ -25,7 +25,8 @@ public:
 	FString DestinationFilePath;
 	FString SourceFilePath;
 
-
+	// 서버 api
+	FString baseURL = "192.168.0.104:8080/ai/drawing/process";
 private:
 	UFUNCTION()
 	void FileOn();
@@ -35,6 +36,5 @@ private:
 	UPROPERTY()
 	class AHttpRequestActor* httpReqActor;
 
-	// 서버 api
-	FString baseURL = "172.17.107.149:8080/ai/drawing/process";
+	
 };

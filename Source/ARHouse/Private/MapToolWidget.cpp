@@ -98,18 +98,15 @@ void UMapToolWidget::MoveObj()
 
 void UMapToolWidget::RotObj()
 {
-	if (player)
+	if (player != nullptr)
 	{
 		player->isRotStart = true;
 
 
-		if (player->isBedSpawn == false)
-			player->isBedSpawn = false;
-
-		if (player->RotationArrowActor != nullptr && player->RotationArrowActor->IsHidden())
-		{
-			player->RotationArrowActor->SetActorHiddenInGame(false);
-		}
+		//if (player->RotationArrowActor != nullptr && player->RotationArrowActor->IsHidden())
+		//{
+		//	player->RotationArrowActor->SetActorHiddenInGame(false);
+		//}
 	}
 }
 

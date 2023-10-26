@@ -95,6 +95,7 @@ void AARCharacter::Tick(float DeltaTime)
 		GetWorld()->SpawnActor<AActor>(chair_BP, GetTouchLocation(firstTouch), FRotator::ZeroRotator, param);
 	}
 
+
 	// 침대 이동
 	if (bIsDragging && ClickedActor && isMoveStart)
 	{
@@ -112,15 +113,16 @@ void AARCharacter::Tick(float DeltaTime)
 		DragDelta.Z = 0;
 		ClickedActor->SetActorLocation(DragStartLocation + DragDelta);
 
-		if (isRotStart)
+		if (RotationArrowActor != nullptr)
 		{
-			
+			RotationArrowActor->SetActorLocation(ClickedActor->GetActorLocation());
 		}
 	}
 
 	// 회전 버튼을 누르면 회전 오브젝트가 스폰되게
-	if (isRotStart && isBedSpawn)
+	if (isRotStart && !RotationArrowActor)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("sdquwdhk"));
 		bedActor = Cast<ABed>(UGameplayStatics::GetActorOfClass(GetWorld(), ABed::StaticClass()));
 
 		if (bedActor)
@@ -136,13 +138,16 @@ void AARCharacter::Tick(float DeltaTime)
 			{
 				bedActor->AttachToComponent(RotationArrowActor->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
 				isBedSpawn = false;
+				isRotStart = false;
 
 			}
 		}
 		
 	}
 
-	if (bIsDragging && ClickedActor && isRotStart)
+	UE_LOG(LogTemp, Warning, TEXT("bIsDragging: %s"), bIsDragging ? TEXT("true") : TEXT("false"));
+
+	if (bIsDragging && ClickedActor == RotationArrowActor)
 	{
 		// 현재 마우스 위치와 이전 마우스 위치 사이의 X 변화량을 계산합니다.
 		float DeltaX = DragEndPosition.X - DragStartLocation.X;
@@ -172,7 +177,7 @@ void AARCharacter::Tick(float DeltaTime)
 		FRotator NewRotation = FRotator(CurrentRotation.Pitch, NewYaw, CurrentRotation.Roll);
 
 		// 액터의 회전 업데이트하기
-		ClickedActor->SetActorRotation(NewRotation);
+		RotationArrowActor->SetActorRotation(NewRotation);
 	}
 
 
@@ -235,6 +240,68 @@ void AARCharacter::ray()
 
 }
 
+void AARCharacter::OnLeftMouseButtonPressed()
+{
+	if (isMoveStart)
+	{
+		// 클릭된 액터 가져오기 (마우스 커서 아래에 있는)
+		FHitResult HitResult;
+		UGameplayStatics::GetPlayerController(this, 0)->GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, false, HitResult);
+
+		if (HitResult.GetActor() != nullptr && HitResult.GetActor()->IsA<ABed>())
+		{
+			ClickedActor = HitResult.GetActor();
+			DragStartLocation = ClickedActor->GetActorLocation();
+			bIsDragging = true;
+
+			if(isRotStart)
+			isRotStart = false;
+		}
+	}
+
+	// 클릭된 액터 가져오기 (마우스 커서 아래에 있는)
+	FHitResult HitResult;
+	UGameplayStatics::GetPlayerController(this, 0)->GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, false, HitResult);
+
+	if (HitResult.GetActor() != nullptr && HitResult.GetActor()->IsA<ARotationArrrowActor>())
+	{
+		ClickedActor = HitResult.GetActor();
+		DragStartLocation = ClickedActor->GetActorLocation();
+		bIsDragging = true;
+
+		// ClickedActor의 이름을 로그에 출력
+		UE_LOG(LogTemp, Warning, TEXT("Clicked Actor: %s"), *ClickedActor->GetName());
+	}
+
+}
+
+void AARCharacter::OnLeftMouseButtonReleased()
+{
+	// 드래그 종료
+	bIsDragging = false;
+	
+	if(isMoveStart)
+	isMoveStart = false;
+	
+
+	if (isRotStart)
+	{
+		if (bedActor->GetAttachParentActor() == RotationArrowActor)
+		{
+			bedActor->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+			
+		}
+		
+		FVector arrowLot = bedActor->GetActorLocation();
+		arrowLot.Z = 100;
+
+		RotationArrowActor->SetActorLocation(arrowLot);
+		bedActor->AttachToActor(RotationArrowActor, FAttachmentTransformRules::KeepWorldTransform);
+
+
+	}
+}
+
 void AARCharacter::ShowPlaneOutLine()
 {
 	// 감지된 물체를 배열에 담기  
@@ -273,60 +340,6 @@ FVector AARCharacter::GetTouchLocation(const FVector2D& touchPos)
 	return FVector::ZeroVector;
 }
 
-
-void AARCharacter::OnLeftMouseButtonPressed()
-{
-	if (isMoveStart)
-	{
-		// 클릭된 액터 가져오기 (마우스 커서 아래에 있는)
-		FHitResult HitResult;
-		UGameplayStatics::GetPlayerController(this, 0)->GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, false, HitResult);
-
-		if (HitResult.GetActor()!=nullptr && HitResult.GetActor()->IsA<ABed>())
-		{
-			ClickedActor = HitResult.GetActor();
-			DragStartLocation = ClickedActor->GetActorLocation();
-			bIsDragging = true;
-		}
-	}
-	
-	if (isRotStart)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("sdadwqefqegwrg"));
-		// 클릭된 액터 가져오기 (마우스 커서 아래에 있는)
-		FHitResult HitResult;
-		UGameplayStatics::GetPlayerController(this, 0)->GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, false, HitResult);
-
-		if (HitResult.GetActor() != nullptr && HitResult.GetActor()->IsA<ARotationArrrowActor>())
-		{
-			ClickedActor = HitResult.GetActor();
-			DragStartLocation = ClickedActor->GetActorLocation();
-			bIsDragging = true;
-
-			// ClickedActor의 이름을 로그에 출력
-			UE_LOG(LogTemp, Warning, TEXT("Clicked Actor: %s"), *ClickedActor->GetName());
-
-		}
-	}
-
-}
-
-void AARCharacter::OnLeftMouseButtonReleased()
-{
-	// 드래그 종료
-	bIsDragging = false;
-
-	if (isMoveStart)
-	{
-		isMoveStart = false;
-	}
-
-	if (isRotStart)
-	{
-		isRotStart = false;
-		RotationArrowActor->Destroy();
-	}
-}
 
 void AARCharacter::MoveForward(float Value)
 {

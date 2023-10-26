@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Interfaces/IHttpBase.h"
 #include "Interfaces/IHttpRequest.h"
 #include "Interfaces/IHttpResponse.h"
 #include "HttpRequestActor.generated.h"
@@ -33,6 +34,8 @@ public:
 	// FBX 파일 받기
 	void GetFBXFile(const FString& url, const FString& savePath);
 
+	void GetStringFromServer(const FString& url);
+
 	UPROPERTY(BlueprintReadWrite)
 	FString saveFBXurl = "D:\\ARHouse\\UE_ARHouse\\Saved\\PersistentDownloadDir";
 
@@ -46,8 +49,11 @@ private:
 	void OnReceivedData(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully);
 	void OnPostData(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully);
 	void OnGetImageData(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully);
-	void OnPostImageData(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully);
+	//void OnPostImageData(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully);
+	void OnPostImageData(TSharedPtr<IHttpRequest> Request, TSharedPtr<IHttpResponse> Response, bool bConnectedSuccessfully);
 	void FBXFileDownload(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully);
+
+	void OnGetStringComplete(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
 
 	UPROPERTY()
 	class AARHouseGameModeBase* gm;

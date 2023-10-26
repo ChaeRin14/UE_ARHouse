@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "HttpRequestActor.h"
@@ -11,7 +11,7 @@
 #include "MainWidget.h"
 
 
-// Åë½Å¿ë Å¬·¡½º
+// í†µì‹ ìš© í´ë˜ìŠ¤
 AHttpRequestActor::AHttpRequestActor()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
@@ -38,45 +38,45 @@ void AHttpRequestActor::Tick(float DeltaTime)
 void AHttpRequestActor::SendRequest(const FString url)
 {
 
-	// ¸ğµâ »ı¼º
+	// ëª¨ë“ˆ ìƒì„±
 	FHttpModule& httpModule = FHttpModule::Get();
-	// ¸ğµâÀ» »ı¼ºÇÏ°í ¸®Äù½ºÆ® ÀÎ½ºÅÏ½º¸¦ »ı¼ºÇÑ´Ù.
+	// ëª¨ë“ˆì„ ìƒì„±í•˜ê³  ë¦¬í€˜ìŠ¤íŠ¸ ì¸ìŠ¤í„´ìŠ¤ë¥¼ ìƒì„±í•œë‹¤.
 	TSharedPtr<IHttpRequest> req = httpModule.CreateRequest();
 
-	// ¿äÃ»ÇÏ±â À§ÇÑ Á¤º¸¸¦ ¼³Á¤ÇÑ´Ù
+	// ìš”ì²­í•˜ê¸° ìœ„í•œ ì •ë³´ë¥¼ ì„¤ì •í•œë‹¤
 	req->SetURL(url);
-	// Áö±İÀº °ªÀ» °¡Á®¿À·Á°í GETÀ» ÀûÀº °ÅÀÓ
+	// ì§€ê¸ˆì€ ê°’ì„ ê°€ì ¸ì˜¤ë ¤ê³  GETì„ ì ì€ ê±°ì„
 	req->SetVerb("GET");
-	// ³»°¡ °¡Á®¿À·Á´Â µ¥ÀÌÅÍÀÇ Á¾·ù¿Í Å¸ÀÔ
-	// ÄÜÅÙÃ÷ Å¸ÀÔ°ú Á¦ÀÌ½¼ Çü½ÄÀ¸·Î ¹Ş¾Æ¿Ã °Å´Ù
-	// ¸¸¾à ÀÌ¹ÌÁö¸¦ °¡Á®¿À·Á¸é ÀÌ¹ÌÁö·Î Àû°í È®ÀåÀÚ ¸íÀ» Àû´Â´Ù
+	// ë‚´ê°€ ê°€ì ¸ì˜¤ë ¤ëŠ” ë°ì´í„°ì˜ ì¢…ë¥˜ì™€ íƒ€ì…
+	// ì½˜í…ì¸  íƒ€ì…ê³¼ ì œì´ìŠ¨ í˜•ì‹ìœ¼ë¡œ ë°›ì•„ì˜¬ ê±°ë‹¤
+	// ë§Œì•½ ì´ë¯¸ì§€ë¥¼ ê°€ì ¸ì˜¤ë ¤ë©´ ì´ë¯¸ì§€ë¡œ ì ê³  í™•ì¥ì ëª…ì„ ì ëŠ”ë‹¤
 	// req->SetHeader(TEXT("Content-Type"), TEXT("image/png"));
 	req->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
 
-	// ¿äÃ»ÀÌ ¿Ï·áµÇ¾úÀ» ¶§ ½ÇÇàµÉ ÇÔ¼ö¸¦ ¹ÙÀÎµùÇÑ´Ù
+	// ìš”ì²­ì´ ì™„ë£Œë˜ì—ˆì„ ë•Œ ì‹¤í–‰ë  í•¨ìˆ˜ë¥¼ ë°”ì¸ë”©í•œë‹¤
 
-	// µÎ °¡ÁöÀÇ ¹æ¹ıÀÌ ÀÖÀ½ BindUFunctionÀ» ½á¼­ Á÷Á¢ ÀÔ·ÂÇÏ±â
-	// ¾Æ´Ï¸é BindUObject·Î ÇÔ¼ö ºÒ·¯¿Í¼­ ¿ì¸® ÇÏ´ø ¹æ½ÄÀ¸·Î ¹ÙÀÎµùÇÏ±â
+	// ë‘ ê°€ì§€ì˜ ë°©ë²•ì´ ìˆìŒ BindUFunctionì„ ì¨ì„œ ì§ì ‘ ì…ë ¥í•˜ê¸°
+	// ì•„ë‹ˆë©´ BindUObjectë¡œ í•¨ìˆ˜ ë¶ˆëŸ¬ì™€ì„œ ìš°ë¦¬ í•˜ë˜ ë°©ì‹ìœ¼ë¡œ ë°”ì¸ë”©í•˜ê¸°
 	// req->OnProcessRequestComplete().BindUFunction(this, FName("OnReceivedData"));
 	req->OnProcessRequestComplete().BindUObject(this, &AHttpRequestActor::OnReceivedData);
 
-	// ¼­¹ö¿¡ ¿äÃ»À» º¸³½´Ù
+	// ì„œë²„ì— ìš”ì²­ì„ ë³´ë‚¸ë‹¤
 	req->ProcessRequest();
 }
 
 
-//  bool bConnectedSuccessfully : ¼º°øÇß´ÂÁö ¾È Çß´ÂÁö¿¡ ´ëÇÑ È®ÀÎ ¹æ¹ı
+//  bool bConnectedSuccessfully : ì„±ê³µí–ˆëŠ”ì§€ ì•ˆ í–ˆëŠ”ì§€ì— ëŒ€í•œ í™•ì¸ ë°©ë²•
 void AHttpRequestActor::OnReceivedData(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully)
 {
 	UE_LOG(LogTemp, Warning, TEXT("OnReceivedData"));
-	// ¸¸¾à ¼º°øÀûÀ¸·Î º¸³»Á³´Ù¸é
+	// ë§Œì•½ ì„±ê³µì ìœ¼ë¡œ ë³´ë‚´ì¡Œë‹¤ë©´
 	if (bConnectedSuccessfully)
 	{
-		// ¹®ÀÚ¿­·Î ¹Ş±â 
+		// ë¬¸ìì—´ë¡œ ë°›ê¸° 
 		FString res = Response->GetContentAsString();
-		// ÀÔ·Â¹ŞÀº °ªÀ» ºĞÇØÇØ¼­ parsedData¿¡ ³Ö¾îÁØ´Ù
+		// ì…ë ¥ë°›ì€ ê°’ì„ ë¶„í•´í•´ì„œ parsedDataì— ë„£ì–´ì¤€ë‹¤
 		FString parsedData = UJsonParseLibrary::JsonParse(res);
-		// res µ¥ÀÌÅÍ¸¦ ³Ñ°ÜÁØ´Ù
+		// res ë°ì´í„°ë¥¼ ë„˜ê²¨ì¤€ë‹¤
 		gm->SetLogText(parsedData);
 	}
 	else
@@ -86,20 +86,20 @@ void AHttpRequestActor::OnReceivedData(FHttpRequestPtr Request, FHttpResponsePtr
 }
 
 
-// POST ¸Ş¼Òµå ¿äÃ»ÇÏ±â
+// POST ë©”ì†Œë“œ ìš”ì²­í•˜ê¸°
 void AHttpRequestActor::PostRequest(const FString url)
 {
 	TMap<FString, FString> studentData;
 	studentData.Add("ImagePath", "AAA");
 
-	// Á¦ÀÌ½¼ ÇüÅÂ·Î ¹Ù²ã¼­ ³Ö¾îÁÖ°Ú´Ù
+	// ì œì´ìŠ¨ í˜•íƒœë¡œ ë°”ê¿”ì„œ ë„£ì–´ì£¼ê² ë‹¤
 	FString myJsonData = UJsonParseLibrary::MakeJson(studentData);
 	gm->SetLogText(myJsonData);
 
-	// ¿äÃ» ¼³Á¤
+	// ìš”ì²­ ì„¤ì •
 	FHttpModule& httpModule = FHttpModule::Get();
 	TSharedRef<IHttpRequest> req = httpModule.CreateRequest();
-	// urlÀ» º¸³»°Ú´Ù
+	// urlì„ ë³´ë‚´ê² ë‹¤
 	req->SetURL(url);
 	req->SetVerb(TEXT("POST"));
 	req->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
@@ -110,40 +110,40 @@ void AHttpRequestActor::PostRequest(const FString url)
 }
 
 
-// Æ÷½ºÆ® ¿äÃ» ÇÔ¼ö
+// í¬ìŠ¤íŠ¸ ìš”ì²­ í•¨ìˆ˜
 void AHttpRequestActor::OnPostData(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully)
 {
 	if (bConnectedSuccessfully)
 	{
 		FString receivedData = Response->GetContentAsString();
-		// ¹ŞÀº µ¥ÀÌÅÍ¸¦ È­¸é¿¡ Ãâ·Â
+		// ë°›ì€ ë°ì´í„°ë¥¼ í™”ë©´ì— ì¶œë ¥
 		gm->SetLogText(receivedData);
-		// ¹ŞÀº µ¥ÀÌÅÍ¸¦ ÆÄÀÏ·Î ÀúÀå
+		// ë°›ì€ ë°ì´í„°ë¥¼ íŒŒì¼ë¡œ ì €ì¥
 		SaveJson(receivedData);
 	}
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("NotStarted"));
-		// ¿äÃ» Àü¼Û »óÅÂ È®ÀÎ
+		// ìš”ì²­ ì „ì†¡ ìƒíƒœ í™•ì¸
 		EHttpRequestStatus::Type status = Request->GetStatus();
 		switch (status)
 		{
-			// ½ÃÀÛÀÌ ¾È µÈ °æ¿ì
+			// ì‹œì‘ì´ ì•ˆ ëœ ê²½ìš°
 		case EHttpRequestStatus::NotStarted:
 			break;
-			// ¾ÆÁ÷ ¸®Äù½ºÆ® ÇÏ·Á°í Ã¼Å© ÁßÀÎ °æ¿ì
+			// ì•„ì§ ë¦¬í€˜ìŠ¤íŠ¸ í•˜ë ¤ê³  ì²´í¬ ì¤‘ì¸ ê²½ìš°
 		case EHttpRequestStatus::Processing:
 			UE_LOG(LogTemp, Warning, TEXT("Processing"));
 			break;
-			// ¿¡·¯°¡ ³­ °æ¿ì
+			// ì—ëŸ¬ê°€ ë‚œ ê²½ìš°
 		case EHttpRequestStatus::Failed:
 			UE_LOG(LogTemp, Warning, TEXT("Failed"));
 			break;
-			// ÀÎÅÍ³İ ¿¬°á¿¡ ¿¡·¯°¡ ³­ °æ¿ì
+			// ì¸í„°ë„· ì—°ê²°ì— ì—ëŸ¬ê°€ ë‚œ ê²½ìš°
 		case EHttpRequestStatus::Failed_ConnectionError:
 			UE_LOG(LogTemp, Warning, TEXT("Failed_ConnectionError"));
 			break;
-			// ¼º°øÇÑ °æ¿ì
+			// ì„±ê³µí•œ ê²½ìš°
 		case EHttpRequestStatus::Succeeded:
 			UE_LOG(LogTemp, Warning, TEXT("Succeeded"));
 			break;
@@ -151,7 +151,7 @@ void AHttpRequestActor::OnPostData(FHttpRequestPtr Request, FHttpResponsePtr Res
 			break;
 		}
 
-		// ÀÀ´ä ÄÚµå È®ÀÎ
+		// ì‘ë‹µ ì½”ë“œ í™•ì¸
 		int32 responseCode = Response->GetResponseCode();
 		gm->SetLogText(FString::Printf(TEXT("Response Code: %d"), responseCode));
 	}
@@ -159,10 +159,10 @@ void AHttpRequestActor::OnPostData(FHttpRequestPtr Request, FHttpResponsePtr Res
 
 
 
-// Á¦ÀÌ½¼ ÆÄÀÏ·Î ÀúÀåÇÏ±â
+// ì œì´ìŠ¨ íŒŒì¼ë¡œ ì €ì¥í•˜ê¸°
 void AHttpRequestActor::SaveJson(const FString jsonData)
 {
-	// ¸¸ÀÏ ÁöÁ¤µÈ ÀÌ¸§ÀÇ Æú´õ°¡ ¾øÀ¸¸é ÇØ´ç Æú´õ¸¦ ¸¸µç´Ù
+	// ë§Œì¼ ì§€ì •ëœ ì´ë¦„ì˜ í´ë”ê°€ ì—†ìœ¼ë©´ í•´ë‹¹ í´ë”ë¥¼ ë§Œë“ ë‹¤
 	FPlatformFileManager& fileManager = FPlatformFileManager::Get();
 	IPlatformFile& platformFile = fileManager.GetPlatformFile();
 
@@ -172,14 +172,14 @@ void AHttpRequestActor::SaveJson(const FString jsonData)
 		platformFile.CreateDirectory(*dirPath);
 	}
 
-	// Á¦ÀÌ½¼ µ¥ÀÌÅÍ¸¦ ÆÄÀÏ·Î ÀúÀåÇÑ´Ù
+	// ì œì´ìŠ¨ ë°ì´í„°ë¥¼ íŒŒì¼ë¡œ ì €ì¥í•œë‹¤
 	FString fullPath = dirPath + "MyJson.json";
 	UE_LOG(LogTemp, Warning, TEXT("save Path: %s"), *fullPath);
 	bool bIsSaved = FFileHelper::SaveStringToFile(jsonData, *fullPath);
 	gm->SetLogText(FString::Printf(TEXT("%s"), bIsSaved ? *FString("Json Saved Successfully!") : *FString("Failed saveing file")));
 }
 
-// ÀÌ¹ÌÁö ¿äÃ» ÇÔ¼ö
+// ì´ë¯¸ì§€ ìš”ì²­ í•¨ìˆ˜
 void AHttpRequestActor::GetImage(const FString url)
 {
 	TSharedRef<IHttpRequest> req = FHttpModule::Get().CreateRequest();
@@ -190,7 +190,7 @@ void AHttpRequestActor::GetImage(const FString url)
 	req->ProcessRequest();
 }
 
-// ÀÌ¹ÌÁö °¡Á®¿À±â
+// ì´ë¯¸ì§€ ê°€ì ¸ì˜¤ê¸°
 void AHttpRequestActor::OnGetImageData(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully)
 {
 	if (bConnectedSuccessfully)
@@ -208,7 +208,7 @@ void AHttpRequestActor::OnGetImageData(FHttpRequestPtr Request, FHttpResponsePtr
 }
 
 
-// ÀÌ¹ÌÁö ÀúÀå
+// ì´ë¯¸ì§€ ì €ì¥
 void AHttpRequestActor::SaveImage(const UTexture2D* tex)
 {
 
@@ -219,7 +219,7 @@ void AHttpRequestActor::PostImage_Png(const FString& url, const UTexture2D* tex)
 {
 	UE_LOG(LogTemp, Warning, TEXT("PostImage_Png"));
 
-	// ÅØ½ºÃ³ÀÇ °¢ ÇÈ¼¿ ÄÃ·¯ Á¤º¸¸¦ ¹è¿­¿¡ ´ã´Â´Ù
+	// í…ìŠ¤ì²˜ì˜ ê° í”½ì…€ ì»¬ëŸ¬ ì •ë³´ë¥¼ ë°°ì—´ì— ë‹´ëŠ”ë‹¤
 	FTexture2DMipMap mipData = tex->GetPlatformData()->Mips[0];
 	TArray<FColor> imgArr;
 	int32 width = mipData.SizeX;
@@ -233,14 +233,14 @@ void AHttpRequestActor::PostImage_Png(const FString& url, const UTexture2D* tex)
 		FMemory::Memcpy(imgArr.GetData(), pixelData, imgArr.Num() * sizeof(FColor));
 		mipData.BulkData.Unlock();
 
-		// ÀÌ¹ÌÁö ¹ÙÀÌÆ® ¹è¿­À» ¾ĞÃàÇÑ´Ù
+		// ì´ë¯¸ì§€ ë°”ì´íŠ¸ ë°°ì—´ì„ ì••ì¶•í•œë‹¤
 		TArray<uint8> compressedImage;
 		FImageUtils::ThumbnailCompressImageArray(width, height, imgArr, compressedImage);
 
-		// ÀÌ¹ÌÁö ¹ÙÀÌÆ® ¹è¿­À» Base64 ÀÎÄÚµùÇÑ´Ù
+		// ì´ë¯¸ì§€ ë°”ì´íŠ¸ ë°°ì—´ì„ Base64 ì¸ì½”ë”©í•œë‹¤
 		FString base64Image = FBase64::Encode(compressedImage);
 
-		// ÀÌ¹ÌÁö µ¥ÀÌÅÍ¸¦ Æ÷½ºÆ®ÇÑ´Ù
+		// ì´ë¯¸ì§€ ë°ì´í„°ë¥¼ í¬ìŠ¤íŠ¸í•œë‹¤
 		TSharedRef<IHttpRequest> Req = FHttpModule::Get().CreateRequest();
 		Req->SetURL(url);
 		Req->SetVerb(TEXT("POST"));
@@ -248,18 +248,19 @@ void AHttpRequestActor::PostImage_Png(const FString& url, const UTexture2D* tex)
 		Req->SetContent(compressedImage);
 		Req->OnProcessRequestComplete().BindUObject(this, &AHttpRequestActor::OnPostImageData);
 		Req->ProcessRequest();
+
 	}
 }
 
 
 
-// ÅØ½ºÃ³ Æ÷½ºÆ® ÇÔ¼ö
+// í…ìŠ¤ì²˜ í¬ìŠ¤íŠ¸ í•¨ìˆ˜
 void AHttpRequestActor::PostImage_Jpg(const FString url, const UTexture2D* tex)
 {
-	UE_LOG(LogTemp, Warning, TEXT("PostImage_Jpg"));
-	// ÅØ½ºÃ³ÀÇ °¢ ÇÈ¼¿ ÄÃ·¯ Á¤º¸¸¦ ¹è¿­¿¡ ´ã´Â´Ù
-	FTexture2DMipMap mipData = tex->GetPlatformData()->Mips[0];
+	UE_LOG(LogTemp, Warning, TEXT("PostImage_jpg"));
 
+	// í…ìŠ¤ì²˜ì˜ ê° í”½ì…€ ì»¬ëŸ¬ ì •ë³´ë¥¼ ë°°ì—´ì— ë‹´ëŠ”ë‹¤
+	FTexture2DMipMap mipData = tex->GetPlatformData()->Mips[0];
 	TArray<FColor> imgArr;
 	int32 width = mipData.SizeX;
 	int32 height = mipData.SizeY;
@@ -272,34 +273,86 @@ void AHttpRequestActor::PostImage_Jpg(const FString url, const UTexture2D* tex)
 		FMemory::Memcpy(imgArr.GetData(), pixelData, imgArr.Num() * sizeof(FColor));
 		mipData.BulkData.Unlock();
 
-		// ÀÌ¹ÌÁö ¹ÙÀÌÆ® ¹è¿­À» ¾ĞÃàÇÑ´Ù
+		// ì´ë¯¸ì§€ ë°”ì´íŠ¸ ë°°ì—´ì„ ì••ì¶•í•œë‹¤
 		TArray<uint8> compressedImage;
 		FImageUtils::ThumbnailCompressImageArray(width, height, imgArr, compressedImage);
 
-		// ÀÌ¹ÌÁö ¹ÙÀÌÆ® ¹è¿­À» Æ÷½ºÆ® ÇÑ´Ù
-		TSharedRef<IHttpRequest> req = FHttpModule::Get().CreateRequest();
-		req->SetURL(url);
-		req->SetVerb("POST");
-		req->SetHeader(TEXT("Content-Type"), TEXT("image/jpeg"));
-		req->SetContent(compressedImage);
-		req->OnProcessRequestComplete().BindUObject(this, &AHttpRequestActor::OnPostImageData);
-		req->ProcessRequest();
+		// ì´ë¯¸ì§€ ë°”ì´íŠ¸ ë°°ì—´ì„ Base64 ì¸ì½”ë”©í•œë‹¤
+		FString base64Image = FBase64::Encode(compressedImage);
 
-		// ¼­¹ö¿¡¼­ fbx ÆÄÀÏ ¹Ş¾Æ¿À±â 
-		GetFBXFile(url, saveFBXurl);
+		// ì´ë¯¸ì§€ ë°ì´í„°ë¥¼ í¬ìŠ¤íŠ¸í•œë‹¤
+		TSharedRef<IHttpRequest> Req = FHttpModule::Get().CreateRequest();
+		Req->SetURL(url);
+		Req->SetVerb(TEXT("POST"));
+		Req->SetHeader(TEXT("Content-Type"), TEXT("image/jpeg"));
+		Req->SetContent(compressedImage);
+		Req->OnProcessRequestComplete().BindUObject(this, &AHttpRequestActor::OnPostImageData);
+		//Req->OnProcessRequestComplete().BindUFunction(this, "OnPostImageData");
+		Req->ProcessRequest();
+		
 	}
 }
 
-void AHttpRequestActor::OnPostImageData(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully)
+
+//void AHttpRequestActor::OnPostImageData(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully)
+void AHttpRequestActor::OnPostImageData(TSharedPtr<IHttpRequest> Request, TSharedPtr<IHttpResponse> Response, bool bConnectedSuccessfully)
 {
-	UE_LOG(LogTemp, Warning, TEXT("%s"), bConnectedSuccessfully ? *Response->GetContentAsString() : *FString::Printf(TEXT("Response code: %d"), Response->GetResponseCode()));
+	GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Blue, FString("Accept to Sever"));
+	UE_LOG(LogTemp, Warning, TEXT("OnPostImageData"));
+	if (bConnectedSuccessfully && Response.IsValid() && Response->GetResponseCode() == 200)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Image uploaded successfully. Now fetching the response."));
+
+		// ì„œë²„ ì‘ë‹µ ì²˜ë¦¬
+		FString ResponseData = Response->GetContentAsString();
+		UE_LOG(LogTemp, Warning, TEXT("Server Response: %s"), *ResponseData);
+
+		// ì„œë²„ ì‘ë‹µì„ JSON ë˜ëŠ” ë‹¤ë¥¸ í˜•ì‹ìœ¼ë¡œ íŒŒì‹±í•˜ì—¬ í•„ìš”í•œ ì •ë³´ë¥¼ ì¶”ì¶œí•©ë‹ˆë‹¤.
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to upload image or receive a response from the server."));
+	}
 
 }
 
-// FBX ÆÄÀÏ ¼­¹ö¿¡¼­ °¡Á®¿À±â
+
+void AHttpRequestActor::GetStringFromServer(const FString& url)
+{
+	UE_LOG(LogTemp, Warning, TEXT("GetStringFromServer"));
+
+	TSharedRef<IHttpRequest> Req = FHttpModule::Get().CreateRequest();
+	Req->SetURL(url);
+	Req->SetVerb(TEXT("POST"));
+
+	// HTTP ì‘ë‹µ ì²˜ë¦¬ê¸° ì„¤ì •
+	Req->OnProcessRequestComplete().BindUObject(this, &AHttpRequestActor::OnGetStringComplete);
+	Req->ProcessRequest();
+}
+
+
+void AHttpRequestActor::OnGetStringComplete(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
+{
+	UE_LOG(LogTemp, Warning, TEXT("OnGetStringComplete"));
+	if (bWasSuccessful && Response.IsValid() && Response->GetResponseCode() == 200)
+	{
+		FString StringResponse = Response->GetContentAsString();
+		UE_LOG(LogTemp, Warning, TEXT("Received JSON string from server: %s"), *StringResponse);
+
+		// ì´ì œ ë¬¸ìì—´ì„ ì‚¬ìš©í•˜ê±°ë‚˜ ì²˜ë¦¬í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to retrieve string from server."));
+	}
+}
+
+
+// FBX íŒŒì¼ ì„œë²„ì—ì„œ ê°€ì ¸ì˜¤ê¸°
 void AHttpRequestActor::GetFBXFile(const FString& url, const FString& savePath)
 {
 	UE_LOG(LogTemp, Warning, TEXT("GetFBXFile"));
+
 	TSharedRef<IHttpRequest> req = FHttpModule::Get().CreateRequest();
 	req->SetURL(url);
 	req->SetVerb("GET");
@@ -309,17 +362,34 @@ void AHttpRequestActor::GetFBXFile(const FString& url, const FString& savePath)
 }
 
 
-// ¹ŞÀº FBX ÆÄÀÏÀ» ¾ğ¸®¾ó¿¡ import ÇÏ±â
+// ë°›ì€ FBX íŒŒì¼ì„ ì–¸ë¦¬ì–¼ì— import í•˜ê¸°
 void AHttpRequestActor::FBXFileDownload(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully)
 {
-	if (bConnectedSuccessfully && Response.IsValid() && Response->GetResponseCode() == EHttpResponseCodes::Ok)
+	if (bConnectedSuccessfully && Response.IsValid() && Response->GetContentType() == "application/octet-stream")
 	{
-		isFBXLoad = true;
+		FString SaveDirectory = TEXT("D:/ARHouse/UE_ARHouse/Saved/PersistentDownloadDir/");
+		FString FileExtension = TEXT(".fbx");
+
+		FString FoundFilePath;
+		TArray<FString> FilePaths;
+		IFileManager::Get().FindFiles(FilePaths, *SaveDirectory, *FileExtension);
+
+		if (FilePaths.Num() > 0)
+		{
+			FoundFilePath = FPaths::Combine(SaveDirectory, FilePaths[0]);
+			UE_LOG(LogTemp, Warning, TEXT("FBX file found at: %s"), *FoundFilePath);
+			
+			// ë¸”í”„ì—ì„œ ëŸ°íƒ€ì„ fbx ê°€ì ¸ì˜¤ê¸° í•¨ìˆ˜ ì‹¤í–‰
+			isFBXLoad = true;
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("FBX file not found in directory: %s"), *SaveDirectory);
+		}
 	}
 	else
 	{
-		// ¼­¹ö¿¡¼­ ´Ù¿î·Îµå ¹ŞÁö ¾ÊÀ½
-		UE_LOG(LogTemp, Error, TEXT("Failed to download the FBX file."));
+		UE_LOG(LogTemp, Error, TEXT("Failed to download FBX file"));
 	}
 }
 
