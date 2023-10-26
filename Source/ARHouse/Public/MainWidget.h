@@ -26,7 +26,7 @@ public:
 	FString SourceFilePath;
 
 	// ¼­¹ö api
-	FString baseURL = "192.168.0.104:8080/ai/drawing/process";
+	FString baseURL = "192.168.0.44:8080/ai/drawing/process";
 private:
 	UFUNCTION()
 	void FileOn();

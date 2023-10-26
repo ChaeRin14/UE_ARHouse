@@ -101,7 +101,7 @@ void UMapToolWidget::RotObj()
 	if (player != nullptr)
 	{
 		player->isRotStart = true;
-
+		player->bIsRotOnly = true;
 
 		//if (player->RotationArrowActor != nullptr && player->RotationArrowActor->IsHidden())
 		//{

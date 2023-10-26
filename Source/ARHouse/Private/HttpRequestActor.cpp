@@ -214,7 +214,7 @@ void AHttpRequestActor::SaveImage(const UTexture2D* tex)
 
 }
 
-
+// 이미지 보내기 
 void AHttpRequestActor::PostImage_Png(const FString& url, const UTexture2D* tex)
 {
 	UE_LOG(LogTemp, Warning, TEXT("PostImage_Png"));
@@ -240,14 +240,16 @@ void AHttpRequestActor::PostImage_Png(const FString& url, const UTexture2D* tex)
 		// 이미지 바이트 배열을 Base64 인코딩한다
 		FString base64Image = FBase64::Encode(compressedImage);
 
+		UE_LOG(LogTemp, Warning, TEXT("Request URL: %s"), *url);
+
 		// 이미지 데이터를 포스트한다
 		TSharedRef<IHttpRequest> Req = FHttpModule::Get().CreateRequest();
 		Req->SetURL(url);
 		Req->SetVerb(TEXT("POST"));
 		Req->SetHeader(TEXT("Content-Type"), TEXT("image/png"));
 		Req->SetContent(compressedImage);
-		Req->OnProcessRequestComplete().BindUObject(this, &AHttpRequestActor::OnPostImageData);
 		Req->ProcessRequest();
+		Req->OnProcessRequestComplete().BindUObject(this, &AHttpRequestActor::OnPostImageData);
 
 	}
 }
@@ -287,7 +289,7 @@ void AHttpRequestActor::PostImage_Jpg(const FString url, const UTexture2D* tex)
 		Req->SetHeader(TEXT("Content-Type"), TEXT("image/jpeg"));
 		Req->SetContent(compressedImage);
 		Req->OnProcessRequestComplete().BindUObject(this, &AHttpRequestActor::OnPostImageData);
-		//Req->OnProcessRequestComplete().BindUFunction(this, "OnPostImageData");
+		Req->OnProcessRequestComplete().BindUFunction(this, "OnPostImageData");
 		Req->ProcessRequest();
 		
 	}
@@ -297,38 +299,59 @@ void AHttpRequestActor::PostImage_Jpg(const FString url, const UTexture2D* tex)
 //void AHttpRequestActor::OnPostImageData(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully)
 void AHttpRequestActor::OnPostImageData(TSharedPtr<IHttpRequest> Request, TSharedPtr<IHttpResponse> Response, bool bConnectedSuccessfully)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Blue, FString("Accept to Sever"));
-	UE_LOG(LogTemp, Warning, TEXT("OnPostImageData"));
-	if (bConnectedSuccessfully && Response.IsValid() && Response->GetResponseCode() == 200)
+
+	if (bConnectedSuccessfully)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Image uploaded successfully. Now fetching the response."));
+		if (Response.IsValid())
+		{
+			int32 ResponseCode = Response->GetResponseCode();
+			if (ResponseCode == 200)
+			{
+				// 서버 응답이 성공적으로 도착한 경우 처리
+				FString ResponseContent = Response->GetContentAsString();
+				// ResponseContent를 파싱하거나 필요한 작업을 수행
 
-		// 서버 응답 처리
-		FString ResponseData = Response->GetContentAsString();
-		UE_LOG(LogTemp, Warning, TEXT("Server Response: %s"), *ResponseData);
-
-		// 서버 응답을 JSON 또는 다른 형식으로 파싱하여 필요한 정보를 추출합니다.
+				// 서버 api
+				FString baseURL = "192.168.0.44:8080/ai/drawing/process";
+				// 이미지 업로드가 성공하면 GetStringFromServer 함수 호출
+				GetStringFromServer("baseURL");
+			}
+			else
+			{
+				// 서버 응답이 200 OK 이외의 상태 코드를 반환한 경우
+				FString ErrorMessage = FString::Printf(TEXT("서버 응답 코드: %d"), ResponseCode);
+				UE_LOG(LogTemp, Error, TEXT("%s"), *ErrorMessage);
+				// 에러 처리 로직 추가
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("서버 응답이 없음"));
+			// 응답이 없을 때의 에러 처리 로직 추가
+		}
 	}
 	else
 	{
-		UE_LOG(LogTemp, Error, TEXT("Failed to upload image or receive a response from the server."));
+		UE_LOG(LogTemp, Error, TEXT("서버에 연결 실패"));
+		// 연결 실패 시의 에러 처리 로직 추가
 	}
 
 }
-
 
 void AHttpRequestActor::GetStringFromServer(const FString& url)
 {
 	UE_LOG(LogTemp, Warning, TEXT("GetStringFromServer"));
 
+	// HTTP 요청 객체 생성
 	TSharedRef<IHttpRequest> Req = FHttpModule::Get().CreateRequest();
 	Req->SetURL(url);
-	Req->SetVerb(TEXT("POST"));
-
-	// HTTP 응답 처리기 설정
+	Req->SetVerb(TEXT("GET"));
+	// 응답 처리기 설정
 	Req->OnProcessRequestComplete().BindUObject(this, &AHttpRequestActor::OnGetStringComplete);
+	// 요청 보내기
 	Req->ProcessRequest();
 }
+
 
 
 void AHttpRequestActor::OnGetStringComplete(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)

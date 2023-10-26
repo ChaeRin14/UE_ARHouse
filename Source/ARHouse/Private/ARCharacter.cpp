@@ -97,27 +97,65 @@ void AARCharacter::Tick(float DeltaTime)
 
 
 	// 침대 이동
-	if (bIsDragging && ClickedActor && isMoveStart)
+	if (bIsDragging && ClickedActor)
 	{
-		FVector WorldOrigin;
-		FVector WorldDirection;
-
-		// 현재 마우스 위치 월드 좌표로 변환하기
-		UGameplayStatics::GetPlayerController(this, 0)->DeprojectMousePositionToWorld(WorldOrigin, WorldDirection);
-
-		// 새로운 위치 계산하기
-		DragEndPosition = WorldOrigin + (WorldDirection * 1000.f); // 이동 거리 조절 가능
-
-		// 액터의 위치 업데이트하기
-		FVector DragDelta = DragEndPosition - DragStartLocation;
-		DragDelta.Z = 0;
-		ClickedActor->SetActorLocation(DragStartLocation + DragDelta);
-
-		if (RotationArrowActor != nullptr)
+	UE_LOG(LogTemp, Warning, TEXT("dqwdqwdeqf"));
+		if (bIsRotOnly)
 		{
-			RotationArrowActor->SetActorLocation(ClickedActor->GetActorLocation());
+	UE_LOG(LogTemp, Warning, TEXT("bIsRotOnly"));
+			// 현재 마우스 위치와 이전 마우스 위치 사이의 X 변화량을 계산합니다.
+			float DeltaX = DragEndPosition.X - DragStartLocation.X;
+
+			// 회전 속도 조절을 위한 변수 설정
+			float RotationSpeed = 1.0f;
+
+			// 프레임당 회전량 계산
+			float RotationAmount = -DeltaX * RotationSpeed * GetWorld()->GetDeltaSeconds();  // 음수로 변경
+
+			// 액터의 현재 회전값
+			FRotator CurrentRotation = ClickedActor->GetActorRotation();
+
+			// Yaw 회전값을 계산하여 업데이트합니다.
+			float NewYaw = CurrentRotation.Yaw + RotationAmount;
+
+			// Yaw 값을 0~360 범위로 제한합니다.
+			NewYaw = FMath::Fmod(NewYaw, 360.0f);
+
+			// 음수 값일 경우에는 양수로 변환합니다.
+			if (NewYaw < 0)
+			{
+				NewYaw += 360.0f;
+			}
+
+			// 새로운 회전값 생성
+			FRotator NewRotation = FRotator(CurrentRotation.Pitch, NewYaw, CurrentRotation.Roll);
+
+			// 액터의 회전 업데이트하기
+			//ClickedActor->SetActorRotation(NewRotation);
+
+			RotationArrowActor->SetActorRotation(NewRotation);
 		}
+
+		else
+		{
+			FVector WorldOrigin;
+			FVector WorldDirection;
+
+			// 현재 마우스 위치 월드 좌표로 변환하기
+			UGameplayStatics::GetPlayerController(this, 0)->DeprojectMousePositionToWorld(WorldOrigin, WorldDirection);
+
+			// 새로운 위치 계산하기
+			DragEndPosition = WorldOrigin + (WorldDirection * 1000.f); // 이동 거리 조절 가능
+
+			// 액터의 위치 업데이트하기
+			FVector DragDelta = DragEndPosition - DragStartLocation;
+			DragDelta.Z = 0;
+			ClickedActor->SetActorLocation(DragStartLocation + DragDelta);
+			bIsRotOnly = false;
+		}
+
 	}
+
 
 	// 회전 버튼을 누르면 회전 오브젝트가 스폰되게
 	if (isRotStart && !RotationArrowActor)
@@ -130,54 +168,18 @@ void AARCharacter::Tick(float DeltaTime)
 			FVector SpawnLocation = bedActor->GetActorLocation() + FVector(0, 0, 70);; // 스폰 위치 설정 (bedActor의 위치로 설정)
 			FRotator SpawnRotation = FRotator::ZeroRotator; // 스폰 회전 설정
 
-				RotationArrowActor = GetWorld()->SpawnActor<ARotationArrrowActor>(SpawnLocation, SpawnRotation);
-				bedActor->SetActorLocation(FVector(0, 0, -70));
-			
-			
+			RotationArrowActor = GetWorld()->SpawnActor<ARotationArrrowActor>(SpawnLocation, SpawnRotation);
+			bedActor->SetActorLocation(FVector(0, 0, -70));
+
+
 			if (RotationArrowActor && bedActor)
 			{
 				bedActor->AttachToComponent(RotationArrowActor->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
 				isBedSpawn = false;
-				isRotStart = false;
 
 			}
 		}
-		
-	}
 
-	UE_LOG(LogTemp, Warning, TEXT("bIsDragging: %s"), bIsDragging ? TEXT("true") : TEXT("false"));
-
-	if (bIsDragging && ClickedActor == RotationArrowActor)
-	{
-		// 현재 마우스 위치와 이전 마우스 위치 사이의 X 변화량을 계산합니다.
-		float DeltaX = DragEndPosition.X - DragStartLocation.X;
-
-		// 회전 속도 조절을 위한 변수 설정
-		float RotationSpeed = 1.0f;
-
-		// 프레임당 회전량 계산
-		float RotationAmount = -DeltaX * RotationSpeed * GetWorld()->GetDeltaSeconds();  // 음수로 변경
-
-		// 액터의 현재 회전값
-		FRotator CurrentRotation = ClickedActor->GetActorRotation();
-
-		// Yaw 회전값을 계산하여 업데이트합니다.
-		float NewYaw = CurrentRotation.Yaw + RotationAmount;
-
-		// Yaw 값을 0~360 범위로 제한합니다.
-		NewYaw = FMath::Fmod(NewYaw, 360.0f);
-
-		// 음수 값일 경우에는 양수로 변환합니다.
-		if (NewYaw < 0)
-		{
-			NewYaw += 360.0f;
-		}
-
-		// 새로운 회전값 생성
-		FRotator NewRotation = FRotator(CurrentRotation.Pitch, NewYaw, CurrentRotation.Roll);
-
-		// 액터의 회전 업데이트하기
-		RotationArrowActor->SetActorRotation(NewRotation);
 	}
 
 
@@ -254,24 +256,28 @@ void AARCharacter::OnLeftMouseButtonPressed()
 			DragStartLocation = ClickedActor->GetActorLocation();
 			bIsDragging = true;
 
-			if(isRotStart)
-			isRotStart = false;
 		}
 	}
 
-	// 클릭된 액터 가져오기 (마우스 커서 아래에 있는)
-	FHitResult HitResult;
-	UGameplayStatics::GetPlayerController(this, 0)->GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, false, HitResult);
-
-	if (HitResult.GetActor() != nullptr && HitResult.GetActor()->IsA<ARotationArrrowActor>())
+	if (isRotStart)
 	{
-		ClickedActor = HitResult.GetActor();
-		DragStartLocation = ClickedActor->GetActorLocation();
-		bIsDragging = true;
+		// 클릭된 액터 가져오기 (마우스 커서 아래에 있는)
+		FHitResult HitResult;
+		UGameplayStatics::GetPlayerController(this, 0)->GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, false, HitResult);
 
-		// ClickedActor의 이름을 로그에 출력
-		UE_LOG(LogTemp, Warning, TEXT("Clicked Actor: %s"), *ClickedActor->GetName());
+		if (HitResult.GetActor() != nullptr && HitResult.GetActor()->IsA<ARotationArrrowActor>())
+		{
+			ClickedActor = HitResult.GetActor();
+			DragStartLocation = ClickedActor->GetActorLocation();
+			bIsDragging = true;
+			bIsRotOnly = true;
+
+			// ClickedActor의 이름을 로그에 출력
+			UE_LOG(LogTemp, Warning, TEXT("Clicked Actor: %s"), *ClickedActor->GetName());
+
+		}
 	}
+
 
 }
 
@@ -279,25 +285,28 @@ void AARCharacter::OnLeftMouseButtonReleased()
 {
 	// 드래그 종료
 	bIsDragging = false;
-	
-	if(isMoveStart)
-	isMoveStart = false;
-	
+
+	if (isMoveStart)
+	{
+		isMoveStart = false;
+		bIsRotOnly = true;
+	}
+
 
 	if (isRotStart)
 	{
 		if (bedActor->GetAttachParentActor() == RotationArrowActor)
 		{
 			bedActor->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-			
+
 		}
-		
+
 		FVector arrowLot = bedActor->GetActorLocation();
 		arrowLot.Z = 100;
 
 		RotationArrowActor->SetActorLocation(arrowLot);
 		bedActor->AttachToActor(RotationArrowActor, FAttachmentTransformRules::KeepWorldTransform);
-
+		bIsRotOnly = false;
 
 	}
 }
@@ -367,14 +376,14 @@ void AARCharacter::MoveRight(float Value)
 
 void AARCharacter::Turn(float Value)
 {
-	CameraComponent->AddRelativeRotation(FRotator(0, Value*2, 0));
+	CameraComponent->AddRelativeRotation(FRotator(0, Value * 2, 0));
 
 }
 
 void AARCharacter::LookUp(float Value)
 {
 	FRotator CameraRotation = CameraComponent->GetRelativeRotation();
-	CameraRotation.Pitch = FMath::Clamp(CameraRotation.Pitch + Value*2, -80, 80);
+	CameraRotation.Pitch = FMath::Clamp(CameraRotation.Pitch + Value * 2, -80, 80);
 	CameraComponent->SetRelativeRotation(CameraRotation);
 }
 
