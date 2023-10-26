@@ -28,10 +28,13 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = MySettings)
 	TSubclassOf<UUserWidget> widget_BP; 
+	UPROPERTY(EditAnywhere, Category = MySettings)
+	TSubclassOf<UUserWidget> widget_How;
 
 private:
 	AActor* spawnedIndicator;
 	UUserWidget* widget_inst;
+	UUserWidget* widget_Howinst;
 
 	void SetIndicator();
 };
