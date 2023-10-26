@@ -48,6 +48,7 @@ public:
 	class ABed* bedActor;
 	bool isbedSpawn;
 
+	UPROPERTY(BlueprintReadWrite)
 	FVector savelot;
 private:
 	UFUNCTION()

@@ -45,19 +45,7 @@ void UWidget_CreateRoom::OnClickCreateButton()
 		}
 	), 5, false);
 
-	if(GetWorld() != nullptr)
-	{
-		FActorSpawnParameters SpawnParams;
-		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-
-		UMapToolWidget* mapToolWidget = NewObject<UMapToolWidget>(this);
-
-		bedActor = GetWorld()->SpawnActor<ABed>(ABed::StaticClass(), mapToolWidget->savelot, FRotator::ZeroRotator, SpawnParams);
-		if (bedActor != nullptr)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Save bedActor Location: %s"), *bedActor->GetActorLocation().ToString());
-		}
-	}
+	isObjSpawn = true;
 }
 
 void UWidget_CreateRoom::AsyncLevelLoad(const FString& levelPath, const FString& levelName)

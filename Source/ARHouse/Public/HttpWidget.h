@@ -13,5 +13,18 @@ UCLASS()
 class ARHOUSE_API UHttpWidget : public UUserWidget
 {
 	GENERATED_BODY()
+
+
+public:
+	virtual void NativeConstruct() override;
 	
+	UPROPERTY(VisibleAnywhere, meta = (BindWidget), Category = MySettings)
+	class UButton* btn_loadSpawn;
+
+	void loadBedSpawn();
+
+	class UWidget_CreateRoom* createWidget;
+
+	UPROPERTY(BlueprintReadWrite)
+	FVector newLot;
 };

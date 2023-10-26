@@ -54,4 +54,7 @@ public:
 
 	class ABed* bedActor;
 
+	UPROPERTY(BlueprintReadWrite)
+	bool isObjSpawn = false;
+
 };

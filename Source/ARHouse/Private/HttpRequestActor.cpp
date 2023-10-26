@@ -9,6 +9,7 @@
 #include <DesktopPlatform/Public/DesktopPlatformModule.h>
 #include "../ARHouseGameModeBase.h"
 #include "MainWidget.h"
+#include <Kismet/GameplayStatics.h>
 
 
 // 통신용 클래스
@@ -251,6 +252,8 @@ void AHttpRequestActor::PostImage_Png(const FString& url, const UTexture2D* tex)
 		Req->ProcessRequest();
 		Req->OnProcessRequestComplete().BindUObject(this, &AHttpRequestActor::OnPostImageData);
 
+
+		UGameplayStatics::OpenLevel(GetWorld(), TEXT("MapTool"));
 	}
 }
 
