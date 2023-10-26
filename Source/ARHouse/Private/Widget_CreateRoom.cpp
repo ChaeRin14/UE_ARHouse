@@ -9,7 +9,6 @@
 #include "Components/Throbber.h"
 #include "UObject/UObjectGlobals.h"
 #include "Components/Progressbar.h"
-#include <Components/AudioComponent.h>
 #include "Bed.h"
 #include "MapToolWidget.h"
 
@@ -22,12 +21,7 @@ void UWidget_CreateRoom::NativeConstruct()
 	text_bulid->SetVisibility(ESlateVisibility::Hidden);
 	pro_Loading->SetVisibility(ESlateVisibility::Hidden);
 
-	UAudioComponent* AudioComp = NewObject<UAudioComponent>(this);
-	if (AudioComp)
-	{
-		AudioComp->SetSound(sound_BGM);
-		AudioComp->Play();
-	}
+
 }
 
 void UWidget_CreateRoom::OnClickCreateButton()
