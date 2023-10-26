@@ -103,10 +103,11 @@ void UMapToolWidget::RotObj()
 		player->isRotStart = true;
 		player->bIsRotOnly = true;
 
-		//if (player->RotationArrowActor != nullptr && player->RotationArrowActor->IsHidden())
-		//{
-		//	player->RotationArrowActor->SetActorHiddenInGame(false);
-		//}
+		if (player->RotationArrowActor != nullptr && player->RotationArrowActor->IsHidden())
+		{
+
+			player->RotationArrowActor->SetActorHiddenInGame(false);
+		}
 	}
 }
 
@@ -116,6 +117,8 @@ void UMapToolWidget::Object_save()
 	{
 		savelot = player->GetActorLocation();
 		UE_LOG(LogTemp, Warning, TEXT("Save player Location: %s"), *savelot.ToString());
+
+		UGameplayStatics::OpenLevel(GetWorld(), TEXT("ARHouse"));
 	}
 
 }

@@ -272,6 +272,8 @@ void AARCharacter::OnLeftMouseButtonPressed()
 			bIsDragging = true;
 			bIsRotOnly = true;
 
+
+			RotationArrowActor->SetActorHiddenInGame(false);
 			// ClickedActor의 이름을 로그에 출력
 			UE_LOG(LogTemp, Warning, TEXT("Clicked Actor: %s"), *ClickedActor->GetName());
 
@@ -295,6 +297,8 @@ void AARCharacter::OnLeftMouseButtonReleased()
 
 	if (isRotStart)
 	{
+
+		RotationArrowActor->SetActorHiddenInGame(true);
 		if (bedActor->GetAttachParentActor() == RotationArrowActor)
 		{
 			bedActor->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
