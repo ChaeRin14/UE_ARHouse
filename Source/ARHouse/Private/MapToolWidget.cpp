@@ -3,6 +3,7 @@
 
 #include "MapToolWidget.h"
 #include "Components/Button.h"
+#include "Components/TextBlock.h"
 #include "ARCharacter.h"
 #include <Kismet/GameplayStatics.h>
 #include "Bed.h"
@@ -39,6 +40,8 @@ void UMapToolWidget::NativeConstruct()
 
 
 	player = Cast<AARCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+
+	
 }
 
 void UMapToolWidget::Object_furniture()
@@ -115,8 +118,6 @@ void UMapToolWidget::Object_save()
 {
 	if (player != nullptr)
 	{
-		savelot = player->GetActorLocation();
-		UE_LOG(LogTemp, Warning, TEXT("Save player Location: %s"), *savelot.ToString());
 
 		UGameplayStatics::OpenLevel(GetWorld(), TEXT("ARHouse"));
 	}

@@ -96,13 +96,27 @@ void AARCharacter::Tick(float DeltaTime)
 	}
 
 
+	// YourActor는 액터의 포인터이며, 이를 사용하여 X 위치를 가져옵니다.
+	if (bedActor != nullptr)
+	{
+		// 액터의 현재 위치를 가져옵니다.
+		FVector ActorLocation = bedActor->GetActorLocation();
+
+		// X 위치를 문자열로 변환합니다.
+		XLocationString = FString::Printf(TEXT("X: %.2f"), ActorLocation.X);
+
+		//txt_X->SetText(FText::FromString(LocationText));
+
+	}
+
+
 	// 침대 이동
 	if (bIsDragging && ClickedActor)
 	{
-	UE_LOG(LogTemp, Warning, TEXT("dqwdqwdeqf"));
+		UE_LOG(LogTemp, Warning, TEXT("dqwdqwdeqf"));
 		if (bIsRotOnly)
 		{
-	UE_LOG(LogTemp, Warning, TEXT("bIsRotOnly"));
+			UE_LOG(LogTemp, Warning, TEXT("bIsRotOnly"));
 			// 현재 마우스 위치와 이전 마우스 위치 사이의 X 변화량을 계산합니다.
 			float DeltaX = DragEndPosition.X - DragStartLocation.X;
 
@@ -204,6 +218,7 @@ void AARCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	PlayerInputComponent->BindAction("MouseLeftButton", IE_Released, this, &AARCharacter::OnLeftMouseButtonReleased);
 
 	PlayerInputComponent->BindAction("Cast", IE_Pressed, this, &AARCharacter::ray);
+	PlayerInputComponent->BindAction(TEXT("newlevel"), IE_Pressed, this, &AARCharacter::LoadLevel);
 }
 
 
@@ -533,4 +548,9 @@ void AARCharacter::PlaceIndicator(const FVector& Location)
 void AARCharacter::FBXImport()
 {
 
+}
+
+void AARCharacter::LoadLevel()
+{
+	UGameplayStatics::OpenLevel(GetWorld(), TEXT("MapTool"));
 }

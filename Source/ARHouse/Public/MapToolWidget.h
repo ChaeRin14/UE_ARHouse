@@ -17,6 +17,7 @@ class ARHOUSE_API UMapToolWidget : public UUserWidget
 public:
 	virtual void NativeConstruct() override;
 
+
 	// °¡±¸
 	UPROPERTY(VisibleAnywhere, meta=(BindWidget), Category = MySettings)
 	class UButton* btn_furniture;
@@ -44,6 +45,14 @@ public:
 	
 	UPROPERTY(VisibleAnywhere, meta=(BindWidget), Category = MySettings)
 	class UButton* btn_save;
+	
+	// ÁÂÇ¥ °ª ¶ç¿ì±â
+	UPROPERTY(BlueprintReadWrite, meta=(BindWidget), Category = MySettings)
+	class UTextBlock* txt_X;
+	UPROPERTY(BlueprintReadWrite, meta=(BindWidget), Category = MySettings)
+	class UTextBlock* txt_Y;
+	UPROPERTY(BlueprintReadWrite, meta=(BindWidget), Category = MySettings)
+	class UTextBlock* txt_Z;
 
 	class ABed* bedActor;
 	bool isbedSpawn;

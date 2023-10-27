@@ -88,6 +88,8 @@ public:
 
    void FBXImport();
 
+   void LoadLevel();
+
 
    bool isMoveStart=false;
    bool isRotStart;
@@ -156,4 +158,9 @@ protected:
 
 	UFUNCTION(BlueprintCallable, Category="FlyCamCharacter")
 	void DetectMouseMoveAtLocation();
+
+	class UMapToolWidget* maptoolWidget;
+	
+	UPROPERTY(BlueprintReadWrite)
+	FString XLocationString;
 };

@@ -27,6 +27,7 @@ void AHttpRequestActor::BeginPlay()
 
 	gm = GetWorld()->GetAuthGameMode<AARHouseGameModeBase>();
 
+
 }
 
 // Called every frame
@@ -253,7 +254,7 @@ void AHttpRequestActor::PostImage_Png(const FString& url, const UTexture2D* tex)
 		Req->OnProcessRequestComplete().BindUObject(this, &AHttpRequestActor::OnPostImageData);
 
 
-		UGameplayStatics::OpenLevel(GetWorld(), TEXT("MapTool"));
+		
 	}
 }
 
@@ -302,30 +303,28 @@ void AHttpRequestActor::PostImage_Jpg(const FString url, const UTexture2D* tex)
 //void AHttpRequestActor::OnPostImageData(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully)
 void AHttpRequestActor::OnPostImageData(TSharedPtr<IHttpRequest> Request, TSharedPtr<IHttpResponse> Response, bool bConnectedSuccessfully)
 {
-
+	UE_LOG(LogTemp, Warning, TEXT("도착!!!!!!!!!!!!!!!!!!!!"));
 	if (bConnectedSuccessfully)
 	{
 		if (Response.IsValid())
 		{
 			int32 ResponseCode = Response->GetResponseCode();
-			if (ResponseCode == 200)
-			{
+			
 				// 서버 응답이 성공적으로 도착한 경우 처리
 				FString ResponseContent = Response->GetContentAsString();
+				UE_LOG(LogTemp, Warning, TEXT("도착!!!!!!!!!!!!!!!!!!!!"));
 				// ResponseContent를 파싱하거나 필요한 작업을 수행
 
 				// 서버 api
-				FString baseURL = "192.168.0.44:8080/ai/drawing/process";
+				FString baseURL = "172.17.107.149:8080/ai/drawing/process";
 				// 이미지 업로드가 성공하면 GetStringFromServer 함수 호출
-				GetStringFromServer("baseURL");
-			}
-			else
-			{
-				// 서버 응답이 200 OK 이외의 상태 코드를 반환한 경우
-				FString ErrorMessage = FString::Printf(TEXT("서버 응답 코드: %d"), ResponseCode);
-				UE_LOG(LogTemp, Error, TEXT("%s"), *ErrorMessage);
-				// 에러 처리 로직 추가
-			}
+				GetStringFromServer(baseURL);
+			
+			
+				//// 서버 응답이 200 OK 이외의 상태 코드를 반환한 경우
+				//FString ErrorMessage = FString::Printf(TEXT("서버 응답 코드: %d"), ResponseCode);
+				//UE_LOG(LogTemp, Error, TEXT("%s"), *ErrorMessage);
+				//// 에러 처리 로직 추가
 		}
 		else
 		{
