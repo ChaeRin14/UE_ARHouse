@@ -118,8 +118,8 @@ void UMapToolWidget::Object_save()
 {
 	if (player != nullptr)
 	{
-
-		UGameplayStatics::OpenLevel(GetWorld(), TEXT("ARHouse"));
+		//UGameplayStatics::OpenLevel(GetWorld(), TEXT("MapTool"));
+		isWidgetChange = true;
 	}
 
 }

@@ -56,6 +56,9 @@ public:
 
 	class ABed* bedActor;
 	bool isbedSpawn;
+	
+	UPROPERTY(BlueprintReadWrite)
+	bool isWidgetChange = false;
 
 	UPROPERTY(BlueprintReadWrite)
 	FVector savelot;
