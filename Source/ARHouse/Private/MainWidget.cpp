@@ -127,7 +127,7 @@ void UMainWidget::PostImageRequest()
 
             // 이미지 보내는 함수로 이동
             httpReqActor->PostImage_Png(baseURL, LoadedTexture);
-            UE_LOG(LogTemp, Warning, TEXT("png : %s"), *baseURL);
+            UE_LOG(LogTemp, Warning, TEXT("PostImage_Png Load : %s"), *baseURL);
         }
         // jpg이면 jpg 포스트 함수로 이동
         else
