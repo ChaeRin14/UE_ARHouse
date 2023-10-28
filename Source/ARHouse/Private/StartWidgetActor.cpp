@@ -6,6 +6,8 @@
 #include "ARBlueprintLibrary.h"
 #include "Widget_HowCanI.h"
 #include "Components/TextBlock.h"
+#include <Sound/SoundCue.h>
+#include <Kismet/GameplayStatics.h>
 
 
 AStartWidgetActor::AStartWidgetActor()
@@ -27,6 +29,12 @@ void AStartWidgetActor::BeginPlay()
 		{
 			widget_Howinst->AddToViewport();
 		}
+	}
+
+	// 사운드 재생
+	if (soundBGM)
+	{
+		UGameplayStatics::PlaySound2D(this, soundBGM, 1.0f, 1.0f, 0.0f);
 	}
 }
 
