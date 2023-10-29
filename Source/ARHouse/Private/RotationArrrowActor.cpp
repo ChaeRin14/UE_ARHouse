@@ -12,7 +12,7 @@ ARotationArrrowActor::ARotationArrrowActor()
 
 	boxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComp"));
 	RootComponent = boxComp;
-	boxComp->SetBoxExtent(FVector(70, 70, 20));
+	boxComp->SetBoxExtent(FVector(40, 40, 20));
 	boxComp->SetCollisionProfileName(TEXT("RotArrow"));
 
 	bodyMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("bodyMesh"));

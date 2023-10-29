@@ -35,7 +35,7 @@ void UWidget_CreateRoom::OnClickCreateButton()
 	FTimerHandle DelayHandle;
 	GetWorld()->GetTimerManager().SetTimer(DelayHandle, FTimerDelegate::CreateLambda([&]()
 		{
-			AsyncLevelLoad("/Game/Map/", "MapTool"); 
+			AsyncLevelLoad("/Game/Map/", "ARHouse"); 
 			isLevelLoad = true;
 		}
 	), 5, false);
