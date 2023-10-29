@@ -70,7 +70,7 @@ void AHttpRequestActor::SendRequest(const FString url)
 //  bool bConnectedSuccessfully : 성공했는지 안 했는지에 대한 확인 방법
 void AHttpRequestActor::OnReceivedData(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully)
 {
-	UE_LOG(LogTemp, Warning, TEXT("OnReceivedData"));
+	//UE_LOG(LogTemp, Warning, TEXT("OnReceivedData"));
 	// 만약 성공적으로 보내졌다면
 	if (bConnectedSuccessfully)
 	{
@@ -119,7 +119,7 @@ void AHttpRequestActor::OnPostData(FHttpRequestPtr Request, FHttpResponsePtr Res
 	{
 		FString receivedData = Response->GetContentAsString();
 		// 받은 데이터를 화면에 출력
-		gm->SetLogText(receivedData);
+		//gm->SetLogText(receivedData);
 		// 받은 데이터를 파일로 저장
 		SaveJson(receivedData);
 	}
@@ -178,7 +178,7 @@ void AHttpRequestActor::SaveJson(const FString jsonData)
 	FString fullPath = dirPath + "MyJson.json";
 	UE_LOG(LogTemp, Warning, TEXT("save Path: %s"), *fullPath);
 	bool bIsSaved = FFileHelper::SaveStringToFile(jsonData, *fullPath);
-	gm->SetLogText(FString::Printf(TEXT("%s"), bIsSaved ? *FString("Json Saved Successfully!") : *FString("Failed saveing file")));
+	//gm->SetLogText(FString::Printf(TEXT("%s"), bIsSaved ? *FString("Json Saved Successfully!") : *FString("Failed saveing file")));
 }
 
 // 이미지 요청 함수
@@ -216,10 +216,11 @@ void AHttpRequestActor::SaveImage(const UTexture2D* tex)
 
 }
 
+
 // 이미지 보내기 
 void AHttpRequestActor::PostImage_Png(const FString& url, const UTexture2D* tex)
 {
-	UE_LOG(LogTemp, Warning, TEXT("PostImage_Png"));
+	//UE_LOG(LogTemp, Warning, TEXT("PostImage_Png Start"));
 
 	// 텍스처의 각 픽셀 컬러 정보를 배열에 담는다
 	FTexture2DMipMap mipData = tex->GetPlatformData()->Mips[0];
@@ -242,7 +243,7 @@ void AHttpRequestActor::PostImage_Png(const FString& url, const UTexture2D* tex)
 		// 이미지 바이트 배열을 Base64 인코딩한다
 		FString base64Image = FBase64::Encode(compressedImage);
 
-		UE_LOG(LogTemp, Warning, TEXT("Request URL: %s"), *url);
+		//UE_LOG(LogTemp, Warning, TEXT("Request URL: %s"), *url);
 
 		// 이미지 데이터를 포스트한다
 		TSharedRef<IHttpRequest> Req = FHttpModule::Get().CreateRequest();
@@ -250,15 +251,13 @@ void AHttpRequestActor::PostImage_Png(const FString& url, const UTexture2D* tex)
 		Req->SetVerb(TEXT("POST"));
 		Req->SetHeader(TEXT("Content-Type"), TEXT("image/png"));
 		Req->SetContent(compressedImage);
-		Req->ProcessRequest();
 		Req->OnProcessRequestComplete().BindUObject(this, &AHttpRequestActor::OnPostImageData);
-
-
-		
+		Req->ProcessRequest();
 	}
 }
 
 
+#pragma region JPG
 
 // 텍스처 포스트 함수
 void AHttpRequestActor::PostImage_Jpg(const FString url, const UTexture2D* tex)
@@ -295,9 +294,11 @@ void AHttpRequestActor::PostImage_Jpg(const FString url, const UTexture2D* tex)
 		Req->OnProcessRequestComplete().BindUObject(this, &AHttpRequestActor::OnPostImageData);
 		Req->OnProcessRequestComplete().BindUFunction(this, "OnPostImageData");
 		Req->ProcessRequest();
-		
+
 	}
 }
+
+#pragma endregion
 
 
 //void AHttpRequestActor::OnPostImageData(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully)
@@ -309,16 +310,16 @@ void AHttpRequestActor::OnPostImageData(TSharedPtr<IHttpRequest> Request, TShare
 		if (Response.IsValid())
 		{
 			int32 ResponseCode = Response->GetResponseCode();
-			
-				// 서버 응답이 성공적으로 도착한 경우 처리
-				FString ResponseContent = Response->GetContentAsString();
-				UE_LOG(LogTemp, Warning, TEXT("도착!!!!!!!!!!!!!!!!!!!!"));
+
+			// 서버 응답이 성공적으로 도착한 경우 처리
+			FString ResponseContent = Response->GetContentAsString();
+			UE_LOG(LogTemp, Warning, TEXT("%s"), *ResponseContent);
 				// ResponseContent를 파싱하거나 필요한 작업을 수행
 
 				// 서버 api
-				FString baseURL = "172.17.107.149:8080/ai/drawing/process";
+				//FString baseURL = "172.17.107.149:8080/ai/drawing/process";
 				// 이미지 업로드가 성공하면 GetStringFromServer 함수 호출
-				GetStringFromServer(baseURL);
+				//GetStringFromServer(baseURL);
 			
 			
 				//// 서버 응답이 200 OK 이외의 상태 코드를 반환한 경우

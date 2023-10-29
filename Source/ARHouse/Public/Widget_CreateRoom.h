@@ -55,4 +55,7 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	bool isObjSpawn = false;
 
+	UPROPERTY(BlueprintReadWrite)
+	bool isLevelLoad = false;
+
 };
