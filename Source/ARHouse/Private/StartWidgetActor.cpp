@@ -67,7 +67,6 @@ void AStartWidgetActor::SetIndicator()
 						// 위젯을 화면에 추가
 						widget_Howinst->SetVisibility(ESlateVisibility::Hidden);
 						widget_inst->AddToViewport();
-						UE_LOG(LogTemp, Warning, TEXT("2"));
 					}
 				}
 				spawnedIndicator = GetWorld()->SpawnActor<AActor>(indicator, hitInfos[0].GetLocalToWorldTransform());
