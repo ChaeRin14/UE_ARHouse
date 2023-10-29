@@ -66,13 +66,11 @@ void AStartWidgetActor::SetIndicator()
 					{
 						// 위젯을 화면에 추가
 						widget_Howinst->SetVisibility(ESlateVisibility::Hidden);
-						/*Widget_HowCanI->text_guide->SetVisibility(ESlateVisibility::Hidden);*/
 						widget_inst->AddToViewport();
 						UE_LOG(LogTemp, Warning, TEXT("2"));
 					}
 				}
 				spawnedIndicator = GetWorld()->SpawnActor<AActor>(indicator, hitInfos[0].GetLocalToWorldTransform());
-				UE_LOG(LogTemp, Warning, TEXT("3"));
 				spawnedIndicator->SetActorHiddenInGame(true);
 			}
 			// 인디케이터가 있다면 Location 값만 변경한다. 
@@ -82,7 +80,6 @@ void AStartWidgetActor::SetIndicator()
 				widget_Howinst->SetVisibility(ESlateVisibility::Hidden);
 				spawnedIndicator->SetActorHiddenInGame(true);
 				spawnedIndicator->SetActorTransform(hitInfos[0].GetLocalToWorldTransform());
-				UE_LOG(LogTemp, Warning, TEXT("4"));
 			}
 		}
 		else
@@ -93,8 +90,6 @@ void AStartWidgetActor::SetIndicator()
 				widget_inst->SetVisibility(ESlateVisibility::Hidden);
 				spawnedIndicator->SetActorHiddenInGame(true);
 				widget_Howinst->SetVisibility(ESlateVisibility::Visible);
-				/*Widget_HowCanI->text_guide->SetVisibility(ESlateVisibility::Visible);*/
-				UE_LOG(LogTemp, Warning, TEXT("5"));
 			}
 		}
 
