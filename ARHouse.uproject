@@ -35,7 +35,7 @@
 		},
 		{
 			"Name": "RuntimeFBXImport",
-			"Enabled": true,
+			"Enabled": false,
 			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/content/4345e1b88fb241f8b693845f6d6d8684"
 		}
 	]
