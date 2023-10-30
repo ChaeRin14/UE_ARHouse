@@ -10,6 +10,7 @@
 #include <Kismet/GameplayStatics.h>
 
 
+
 AStartWidgetActor::AStartWidgetActor()
 {
  	
@@ -21,7 +22,6 @@ AStartWidgetActor::AStartWidgetActor()
 void AStartWidgetActor::BeginPlay()
 {
 	Super::BeginPlay();
-	
 	if (widget_How)
 	{
 		widget_Howinst = (CreateWidget<UUserWidget>(GetWorld(), widget_How));
@@ -53,7 +53,6 @@ void AStartWidgetActor::SetIndicator()
 		// 화면에 추적된 면이 있는지 AR 라인 트레이스로 검색한다.
 		TArray<FARTraceResult> hitInfos = UARBlueprintLibrary::LineTraceTrackedObjects(FVector2D(2560 / 2, 1440 / 2), false, true, false, false);
 		UWidget_HowCanI* Widget_HowCanI = NewObject<UWidget_HowCanI>();
-
 		if (hitInfos.Num() > 0)
 		{
 			// 인디케이터가 없다면 생성한다.

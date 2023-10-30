@@ -41,7 +41,19 @@ public:
 
 	UPROPERTY(EditAnywhere, Category="MySettings")
 	bool bIsClicked = false;
+	
+	UPROPERTY(EditAnywhere, Category="MySettings")
+	bool bSpawnOtherWidget = true;
+	
+	UPROPERTY(VisibleAnywhere, meta=(BindWidget), Category="MySettings")
+	class UImage* img_Hand;
+	
+	UPROPERTY(VisibleAnywhere, meta=(BindWidget), Category="MySettings")
+	class UImage* img_HandEffect;
 
+	UPROPERTY(VisibleAnywhere, Transient, meta = (BindWidgetAnim), Category = "MySettings")
+	class UWidgetAnimation* a_Hand;
+	
 
 	UFUNCTION()
 	void OnClickCreateButton();

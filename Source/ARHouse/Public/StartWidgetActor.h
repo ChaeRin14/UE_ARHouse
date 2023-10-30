@@ -34,10 +34,14 @@ public:
 	UPROPERTY(EditAnywhere, Category = MySettings)
 	class USoundCue* soundBGM;
 
+	UPROPERTY(EditAnywhere, Category= MySettings)
+	class UWidget_CreateRoom* widCreateRoom;
+
 private:
 	AActor* spawnedIndicator;
 	UUserWidget* widget_inst;
 	UUserWidget* widget_Howinst;
+
 
 	void SetIndicator();
 };
