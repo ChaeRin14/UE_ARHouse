@@ -256,7 +256,6 @@ void AHttpRequestActor::PostImage_Png(const FString& url, const UTexture2D* tex)
 	}
 }
 
-
 #pragma region JPG
 
 // 텍스처 포스트 함수
@@ -299,7 +298,6 @@ void AHttpRequestActor::PostImage_Jpg(const FString url, const UTexture2D* tex)
 }
 
 #pragma endregion
-
 
 //void AHttpRequestActor::OnPostImageData(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully)
 void AHttpRequestActor::OnPostImageData(TSharedPtr<IHttpRequest> Request, TSharedPtr<IHttpResponse> Response, bool bConnectedSuccessfully)

@@ -3,6 +3,7 @@
 
 #include "Bed.h"
 #include <Components/BoxComponent.h>
+#include "MapToolWidget.h"
 
 // Sets default values
 ABed::ABed()
@@ -20,12 +21,14 @@ ABed::ABed()
 
 	BodyMesh->SetRelativeLocation(FVector(0, 10, -50));
 
-	ConstructorHelpers::FObjectFinder<UStaticMesh> TempMesh(TEXT("/Script/Engine.StaticMesh'/Game/Asset/bed/Bed.Bed'"));
+	ConstructorHelpers::FObjectFinder<UStaticMesh> TempMesh(TEXT("/Script/Engine.StaticMesh'/Game/Asset/bed/Queen/Bed.Bed'"));
 
 	if (TempMesh.Succeeded())
 	{
 		BodyMesh->SetStaticMesh(TempMesh.Object);
 	}
+
+	mapToolWidget = CreateWidget<UMapToolWidget>(GetWorld(), UMapToolWidget::StaticClass());
 
 }
 
@@ -41,7 +44,23 @@ void ABed::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (mapToolWidget != nullptr)
+	{
+		FVector bedLot = GetActorLocation();
+		float bedLotX = bedLot.X;
+		FString LotString = FString::Printf(TEXT("X: %.2f"), bedLotX);
+		FText lotText = FText::FromString(LotString);
+
+		//UE_LOG(LogTemp, Warning, TEXT("lotText: %s"), *lotText.ToString());
+
+		mapToolWidget->XLot(lotText);
+	}
+
 }
 
+void ABed::BedLotText()
+{
+
+}
 
 

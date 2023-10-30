@@ -88,7 +88,6 @@ public:
 
    void FBXImport();
 
-   void LoadLevel();
 
 
    bool isMoveStart=false;

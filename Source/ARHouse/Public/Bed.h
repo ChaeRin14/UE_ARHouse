@@ -4,14 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "MapToolWidget.h"
 #include "Bed.generated.h"
 
 UCLASS()
 class ARHOUSE_API ABed : public AActor
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	// Sets default values for this actor's properties
 	ABed();
 
@@ -19,7 +20,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -27,6 +28,11 @@ public:
 	class UBoxComponent* BoxComp;
 	UPROPERTY(EditAnywhere)
 	class UStaticMeshComponent* BodyMesh;
+
+	UFUNCTION(BlueprintCallable)
+	void BedLotText();
+
+	class UMapToolWidget* mapToolWidget;
 
 
 };

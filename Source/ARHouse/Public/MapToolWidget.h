@@ -27,13 +27,24 @@ public:
 	// 벽지
 	UPROPERTY(VisibleAnywhere, meta=(BindWidget), Category = MySettings)
 	class UButton* btn_wallpaper;
-	// 템플릿
+	
+	// 카테고리 : 침대
 	UPROPERTY(VisibleAnywhere, meta=(BindWidget), Category = MySettings)
-	class UButton* btn_template;
+	class UButton* Cbtn_Bed;
+	// 소파
+	UPROPERTY(VisibleAnywhere, meta=(BindWidget), Category = MySettings)
+	class UButton* Cbtn_Sofa;
+	// 테이블
+	UPROPERTY(VisibleAnywhere, meta=(BindWidget), Category = MySettings)
+	class UButton* Cbtn_Table;
 
 	// 가구 - 침대
 	UPROPERTY(VisibleAnywhere, meta=(BindWidget), Category = MySettings)
 	class UButton* btn_bed;
+
+
+
+	
 
 	// 오브젝트 이동 버튼
 	UPROPERTY(VisibleAnywhere, meta=(BindWidget), Category = MySettings)
@@ -43,15 +54,12 @@ public:
 	class UButton* btn_Rotation;
 
 	
-	UPROPERTY(VisibleAnywhere, meta=(BindWidget), Category = MySettings)
-	class UButton* btn_save;
-	
 	// 좌표 값 띄우기
-	UPROPERTY(BlueprintReadWrite, meta=(BindWidget), Category = MySettings)
+	UPROPERTY(VisibleAnywhere, meta=(BindWidget), Category = MySettings)
 	class UTextBlock* txt_X;
-	UPROPERTY(BlueprintReadWrite, meta=(BindWidget), Category = MySettings)
+	UPROPERTY(VisibleAnywhere, meta=(BindWidget), Category = MySettings)
 	class UTextBlock* txt_Y;
-	UPROPERTY(BlueprintReadWrite, meta=(BindWidget), Category = MySettings)
+	UPROPERTY(VisibleAnywhere, meta=(BindWidget), Category = MySettings)
 	class UTextBlock* txt_Z;
 
 	class ABed* bedActor;
@@ -62,6 +70,9 @@ public:
 
 	UPROPERTY(BlueprintReadWrite)
 	FVector savelot;
+
+	UFUNCTION()
+	void XLot(FText NewText);
 private:
 	UFUNCTION()
 	void Object_furniture();
@@ -83,7 +94,7 @@ private:
 	
 	UFUNCTION()
 	void Object_save();
-
+	
 
 	class AARCharacter* player;
 	

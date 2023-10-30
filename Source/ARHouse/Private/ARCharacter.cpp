@@ -218,7 +218,6 @@ void AARCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	PlayerInputComponent->BindAction("MouseLeftButton", IE_Released, this, &AARCharacter::OnLeftMouseButtonReleased);
 
 	PlayerInputComponent->BindAction("Cast", IE_Pressed, this, &AARCharacter::ray);
-	PlayerInputComponent->BindAction(TEXT("newlevel"), IE_Pressed, this, &AARCharacter::LoadLevel);
 }
 
 
@@ -550,7 +549,3 @@ void AARCharacter::FBXImport()
 
 }
 
-void AARCharacter::LoadLevel()
-{
-	UGameplayStatics::OpenLevel(GetWorld(), TEXT("MapTool"));
-}

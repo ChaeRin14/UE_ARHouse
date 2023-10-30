@@ -20,6 +20,12 @@ public:
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget), Category = MySettings)
 	class UButton* btn_fileImage;
 
+	UPROPERTY(VisibleAnywhere, meta = (BindWidget), Category = MySettings)
+	class UButton* MapLoadBtn;
+	UPROPERTY(VisibleAnywhere, meta = (BindWidget), Category = MySettings)
+	class UImage* LoadImage;
+	UPROPERTY(VisibleAnywhere, meta = (BindWidget), Category = MySettings)
+	class UTextBlock* txt_MapLoad;
 
 	FString AbsolutePath;
 	FString DestinationFilePath;
@@ -30,7 +36,10 @@ public:
 private:
 	UFUNCTION()
 	void FileOn();
+	UFUNCTION()
 	void PostImageRequest();
+	UFUNCTION()
+	void LoadMap();
 
 	
 	UPROPERTY()

@@ -21,8 +21,7 @@ void UMapToolWidget::NativeConstruct()
 	btn_light->OnClicked.AddDynamic(this, &UMapToolWidget::Object_light);
 	// 벽지
 	btn_wallpaper->OnClicked.AddDynamic(this, &UMapToolWidget::Object_wallpaper);
-	// 템플릿
-	btn_template->OnClicked.AddDynamic(this, &UMapToolWidget::Object_template);
+	
 
 	// 가구 - 침대
 	btn_bed->OnClicked.AddDynamic(this, &UMapToolWidget::Spawn_Bed);
@@ -33,11 +32,10 @@ void UMapToolWidget::NativeConstruct()
 	btn_Rotation->OnClicked.AddDynamic(this, &UMapToolWidget::RotObj);
 
 
-	btn_save->OnClicked.AddDynamic(this, &UMapToolWidget::Object_save);
-
 	// 침대 버튼 꺼 두기
 	btn_bed->SetVisibility(ESlateVisibility::Hidden);
 
+	txt_X = Cast<UTextBlock>(GetWidgetFromName(TEXT("txt_X")));
 
 	player = Cast<AARCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 
@@ -122,5 +120,18 @@ void UMapToolWidget::Object_save()
 		isWidgetChange = true;
 	}
 
+}
+
+void UMapToolWidget::XLot(FText NewText)
+{
+	if (txt_X)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("XLot"));
+		txt_X->SetText(NewText);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("XLot!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"));
+	}
 }
 
