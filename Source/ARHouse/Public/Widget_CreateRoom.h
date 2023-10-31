@@ -42,9 +42,23 @@ public:
 	UPROPERTY(EditAnywhere, Category="MySettings")
 	bool bIsClicked = false;
 
+	UPROPERTY(VisibleAnywhere, meta = (BindWidget), Category = "MySettings")
+	class UImage* img_Hand;
+
+	UPROPERTY(VisibleAnywhere, Transient, meta = (BindWidgetAnim), Category = "MySettings")
+	class UWidgetAnimation* a_Click;
+
+	UPROPERTY(EditAnywhere, Category="MySettings")
+	class AStartWidgetActor* startWA;
+
+	UPROPERTY(VisibleAnywhere, meta=(BindWidget), Category="MySettings")
+	class UButton* btn_Preview;
 
 	UFUNCTION()
 	void OnClickCreateButton();
+
+	UFUNCTION()
+	void OnCliCKPreviewButton();
 
 	void AsyncLevelLoad(const FString& levelPath, const FString& levelName);
 	void OnFinishedLevelLoad(const FString levelName);

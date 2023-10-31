@@ -56,7 +56,7 @@ void AARCharacter::BeginPlay()
 
 	// Calculate the start and end points for the vertical line trace
 	FVector StartLocation = InitialPoint;
-	FVector EndLocation = FVector(InitialPoint.X, InitialPoint.Y, InitialPoint.Z - 50000);
+	FVector EndLocation = FVector(InitialPoint.X, InitialPoint.Y, InitialPoint.Z - 100000);
 
 	FCollisionQueryParams TraceParams(FName(TEXT("GroundTrace")), true, this);
 	TraceParams.bTraceComplex = true;
@@ -83,16 +83,24 @@ void AARCharacter::Tick(float DeltaTime)
 	SetActorLocation(p, true);
 
 	FVector2D firstTouch;
-	bool bIsFirstTouch;
+	bool bIsFirstTouch = true;
 
 	pc->GetInputTouchState(ETouchIndex::Touch1, firstTouch.X, firstTouch.Y, bIsFirstTouch);
 
 	if (chair_inst == nullptr && bIsFirstTouch)
 	{
-		FActorSpawnParameters param;
-		param.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-
-		GetWorld()->SpawnActor<AActor>(chair_BP, GetTouchLocation(firstTouch), FRotator::ZeroRotator, param);
+	 
+		if (bisFirstSpawn)
+		{
+			FActorSpawnParameters param;
+			param.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+			GetWorld()->SpawnActor<AActor>(chair_BP, GetTouchLocation(firstTouch), FRotator::ZeroRotator, param);
+			UE_LOG(LogTemp, Warning, TEXT("bisFirstSpawn: %s"), bisFirstSpawn ? TEXT("true") : TEXT("false"));
+			bisFirstSpawn = false;
+		}
+		
+	
+		
 	}
 
 

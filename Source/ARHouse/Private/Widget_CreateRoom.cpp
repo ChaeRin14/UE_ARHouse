@@ -11,16 +11,18 @@
 #include "Components/Progressbar.h"
 #include "Bed.h"
 #include "MapToolWidget.h"
-
+#include "StartWidgetActor.h"
 
 void UWidget_CreateRoom::NativeConstruct()
 {
 	btn_MakeRoom->OnClicked.AddDynamic(this, &UWidget_CreateRoom::OnClickCreateButton);
+	btn_Preview->OnClicked.AddDynamic(this, &UWidget_CreateRoom::OnCliCKPreviewButton);
 
 	img_Loading->SetVisibility(ESlateVisibility::Hidden);
 	text_bulid->SetVisibility(ESlateVisibility::Hidden);
 	pro_Loading->SetVisibility(ESlateVisibility::Hidden);
 
+	PlayAnimation(a_Click, 0, 0);
 
 }
 
@@ -30,6 +32,7 @@ void UWidget_CreateRoom::OnClickCreateButton()
 	img_Loading->SetVisibility(ESlateVisibility::Visible);
 	text_bulid->SetVisibility(ESlateVisibility::Visible);
 	btn_MakeRoom->SetVisibility(ESlateVisibility::Hidden);
+	img_Hand->SetVisibility(ESlateVisibility::Hidden);
 	pro_Loading->SetVisibility(ESlateVisibility::Visible);
 	PlayAnimation(a_Loading);
 	FTimerHandle DelayHandle;
@@ -41,6 +44,18 @@ void UWidget_CreateRoom::OnClickCreateButton()
 	), 5, false);
 
 	isObjSpawn = true;
+
+	
+	/*startWA->RemoveUI();*/
+	
+}
+
+void UWidget_CreateRoom::OnCliCKPreviewButton()
+{
+	UE_LOG(LogTemp, Warning, TEXT("click"));
+
+	startWA->Preview();
+
 }
 
 void UWidget_CreateRoom::AsyncLevelLoad(const FString& levelPath, const FString& levelName)

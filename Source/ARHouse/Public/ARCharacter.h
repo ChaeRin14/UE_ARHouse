@@ -52,6 +52,10 @@ public:
 	UPROPERTY(EditAnywhere, Category = MySettings)
 	TSubclassOf<AActor> chair_BP;
 
+	
+	UPROPERTY(EditAnywhere, Category = MySettings)
+	bool bisFirstSpawn = true;
+
 	class ABed* bedActor;
 
 	class ARotationArrrowActor* RotationArrowActor;
