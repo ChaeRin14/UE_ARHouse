@@ -35,7 +35,6 @@ void UMapToolWidget::NativeConstruct()
 	// 침대 버튼 꺼 두기
 	btn_bed->SetVisibility(ESlateVisibility::Hidden);
 
-	txt_X = Cast<UTextBlock>(GetWidgetFromName(TEXT("txt_X")));
 
 	player = Cast<AARCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 
@@ -124,6 +123,8 @@ void UMapToolWidget::Object_save()
 
 void UMapToolWidget::XLot(FText NewText)
 {
+
+	txt_X = Cast<UTextBlock>(GetWidgetFromName(TEXT("txt_X")));
 	if (txt_X)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("XLot"));

@@ -183,7 +183,7 @@ void AARCharacter::Tick(float DeltaTime)
 			FRotator SpawnRotation = FRotator::ZeroRotator; // 스폰 회전 설정
 
 			RotationArrowActor = GetWorld()->SpawnActor<ARotationArrrowActor>(SpawnLocation, SpawnRotation);
-			bedActor->SetActorLocation(FVector(0, 0, -70));
+			bedActor->SetActorLocation(FVector(0, 0, -60));
 
 
 			if (RotationArrowActor && bedActor)

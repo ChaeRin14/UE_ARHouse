@@ -32,14 +32,15 @@ public:
 	FString SourceFilePath;
 
 	// ¼­¹ö api
-	FString baseURL = "192.168.0.47:8080/ai/drawing/process";
+	FString baseURL = "192.168.0.91:8080/ai/drawing/process";
+
 private:
 	UFUNCTION()
 	void FileOn();
 	UFUNCTION()
 	void PostImageRequest();
 	UFUNCTION()
-	void LoadMap();
+	void FBXLoad();
 
 	
 	UPROPERTY()

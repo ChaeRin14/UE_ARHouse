@@ -18,8 +18,7 @@ void UMainWidget::NativeConstruct()
 
 	// 이미지 업로드
 	btn_fileImage->OnClicked.AddDynamic(this, &UMainWidget::FileOn);
-	MapLoadBtn->OnClicked.AddDynamic(this, &UMainWidget::LoadMap);
-
+	MapLoadBtn->OnClicked.AddDynamic(this, &UMainWidget::FBXLoad);
 
 	MapLoadBtn->SetVisibility(ESlateVisibility::Hidden);
 	LoadImage->SetVisibility(ESlateVisibility::Hidden);
@@ -162,8 +161,9 @@ void UMainWidget::PostImageRequest()
 	}
 }
 
-void UMainWidget::LoadMap()
+void UMainWidget::FBXLoad()
 {
+		UE_LOG(LogTemp, Error, TEXT("FBXLoad"));
 	UGameplayStatics::OpenLevel(GetWorld(), TEXT("MapTool"));
 }
 

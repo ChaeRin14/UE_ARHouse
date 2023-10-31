@@ -51,7 +51,6 @@ void ABed::Tick(float DeltaTime)
 		FString LotString = FString::Printf(TEXT("X: %.2f"), bedLotX);
 		FText lotText = FText::FromString(LotString);
 
-		//UE_LOG(LogTemp, Warning, TEXT("lotText: %s"), *lotText.ToString());
 
 		mapToolWidget->XLot(lotText);
 	}
