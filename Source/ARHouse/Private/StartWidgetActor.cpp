@@ -44,11 +44,19 @@ void AStartWidgetActor::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	//ShowPlaneOutLine();
-	SetIndicator();
+	if(bisRemove == true)
+	{
+		SetIndicator();
+	}
+
+	
+	
+	
 }
 
 void AStartWidgetActor::SetIndicator()
 {
+		if (previewActor == nullptr) return;
 		if (indicator == nullptr) return;
 		// 화면에 추적된 면이 있는지 AR 라인 트레이스로 검색한다.
 		TArray<FARTraceResult> hitInfos = UARBlueprintLibrary::LineTraceTrackedObjects(FVector2D(2560 / 2, 1440 / 2), false, true, false, false);
@@ -57,7 +65,7 @@ void AStartWidgetActor::SetIndicator()
 		if (hitInfos.Num() > 0)
 		{
 			// 인디케이터가 없다면 생성한다.
-			if (spawnedIndicator == nullptr)
+			if (spawnedIndicator == nullptr && spawnedpreviewActor == nullptr)
 			{
 				if (widget_BP)
 				{
@@ -71,6 +79,8 @@ void AStartWidgetActor::SetIndicator()
 				}
 				spawnedIndicator = GetWorld()->SpawnActor<AActor>(indicator, hitInfos[0].GetLocalToWorldTransform());
 				spawnedIndicator->SetActorHiddenInGame(true);
+				
+				spawnedpreviewActor = GetWorld()->SpawnActor<AActor>(previewActor, hitInfos[0].GetLocalToWorldTransform());
 			}
 			// 인디케이터가 있다면 Location 값만 변경한다. 
 			else
@@ -94,4 +104,31 @@ void AStartWidgetActor::SetIndicator()
 
 }
 
+void AStartWidgetActor::RemoveUI()
+{
+	if (widget_Howinst != nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Remove!!"));
+// 		bisRemove = false;
+// 		widget_Howinst->SetVisibility(ESlateVisibility::Hidden);
+	}
+	
+}
+
+void AStartWidgetActor::Preview()
+{
+	/*if (previewActor == nullptr) return;*/
+// 	// 화면에 추적된 면이 있는지 AR 라인 트레이스로 검색한다.
+// 	TArray<FARTraceResult> hitInfos = UARBlueprintLibrary::LineTraceTrackedObjects(FVector2D(2560 / 2, 1440 / 2), false, true, false, false);
+// 	if (hitInfos.Num() > 0)
+// 	{
+		// 인디케이터가 없다면 생성한다.
+/*		if (spawnedpreviewActor == nullptr)*/
+/*		{*/
+// 			UE_LOG(LogTemp, Warning, TEXT("Spawn Preview"));
+// 			spawnedpreviewActor = GetWorld()->SpawnActor<AActor>(previewActor, GetActorLocation() , GetActorRotation());
+// 			UE_LOG(LogTemp, Warning, TEXT("Spawn Complete!"));
+/*		}*/
+/*	}*/
+}
 

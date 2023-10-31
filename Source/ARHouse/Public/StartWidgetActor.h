@@ -34,10 +34,26 @@ public:
 	UPROPERTY(EditAnywhere, Category = MySettings)
 	class USoundCue* soundBGM;
 
+	UPROPERTY(EditAnywhere, Category = MySettings)
+	class UWidget_CreateRoom* widget_CR;
+
+	UPROPERTY(EditAnywhere, Category = MySettings)
+	bool bisRemove = true;
+
+	UPROPERTY(EditAnywhere, Category = MySettings)
+	TSubclassOf<AActor> previewActor;
+
+
 private:
 	AActor* spawnedIndicator;
 	UUserWidget* widget_inst;
 	UUserWidget* widget_Howinst;
+	UPROPERTY(EditAnywhere, Category = MySettings)
+	AActor* spawnedpreviewActor;
 
 	void SetIndicator();
+public:
+	void RemoveUI();
+
+	void Preview();
 };
